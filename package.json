@@ -3,17 +3,13 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "workspaces": ["client", "server"],
   "scripts": {
-    "dev": "vite",
-    "dev:server": "vite --host 127.0.0.1",
-    "build": "vite build && node scripts/check-ui-bundle.mjs",
-    "preview": "vite preview",
-    "check:api": "node scripts/check-api.mjs"
+    "dev": "concurrently -n client,server -c cyan,green \"npm:dev -w client\" \"npm:dev -w server\"",
+    "build": "npm run build -w client",
+    "check": "npm run check -w server"
   },
-  "dependencies": {
-    "vite": "5.4.21",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
-  },
-  "devDependencies": {}
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
 }

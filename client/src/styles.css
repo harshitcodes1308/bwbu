@@ -12,7 +12,7 @@
   --line: rgba(107, 66, 38, 0.18);
   --muted: #685C53;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --bottom-nav-height: 76px;
+  --bottom-nav-height: 96px;
   font-family: "Noto Sans Devanagari", "Devanagari Sangam MN", sans-serif;
   color: var(--ink);
   background: var(--wheat);
@@ -22,7 +22,7 @@
 
 * { box-sizing: border-box; }
 
-html { background: var(--soil-brown); }
+html { background: var(--soil-brown); scroll-behavior: smooth; }
 
 html:lang(en) { font-family: Inter, "Avenir Next", sans-serif; }
 html:lang(hi) { font-family: "Noto Sans Devanagari", "Devanagari Sangam MN", sans-serif; }
@@ -44,7 +44,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 
 .brand-header { display: flex; align-items: center; justify-content: space-between; width: min(100%, 1100px); min-height: 76px; margin: 0 auto; padding: 18px 24px; }
 .brand-header.compact { position: relative; z-index: 1; width: min(100%, 640px); min-height: 68px; padding: 16px 20px 12px; }
-.brand-lockup { display: flex; align-items: center; gap: 10px; }
+.brand-left { display: flex; align-items: center; gap: 12px; }
+.brand-lockup { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; text-align: start; cursor: pointer; }
+.brand-lockup:disabled { cursor: default; }
+.header-back { width: 40px; height: 40px; flex-shrink: 0; }
 .brand-seal { display: grid; place-items: center; width: 34px; height: 34px; border: 2px solid var(--soil-brown); border-radius: 50%; transform: rotate(45deg); }
 .brand-seal span { width: 10px; height: 18px; border-inline: 2px solid var(--soil-brown); }
 .brand-name { margin: 0; color: var(--soil-brown); font-size: 21px; font-weight: 800; line-height: 1; }
@@ -290,9 +293,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .settings-list span { color: var(--muted); }
 .settings-list strong { font-size: 16px; }
 
-.bottom-nav { position: fixed; z-index: 3; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(4, 1fr); width: min(100%, 640px); min-height: 76px; margin: 0 auto; padding: 8px 10px max(8px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: rgba(255, 253, 247, .96); backdrop-filter: blur(14px); }
-.bottom-nav button { display: grid; place-items: center; gap: 4px; min-height: 54px; border: 0; color: var(--muted); background: transparent; font-size: 13px; font-weight: 750; }
-.bottom-nav button.selected { color: var(--soil-brown); }
+.bottom-nav { position: fixed; z-index: 3; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: min(100% - 24px, 560px); margin: 0 auto; padding: 8px; border-radius: 34px; background: var(--paper); box-shadow: 0 16px 38px rgba(80, 44, 23, .30), 0 4px 12px rgba(80, 44, 23, .16); }
+.bottom-nav button { display: grid; place-items: center; gap: 4px; min-height: 56px; border: 0; border-radius: 22px; color: var(--muted); background: transparent; font-size: 13px; font-weight: 750; transition: background-color .18s ease, color .18s ease; }
+.bottom-nav button.selected { background: var(--soil-brown); color: var(--paper); }
+.bottom-nav svg { width: 24px; height: 24px; }
 
 .icon { position: relative; display: inline-block; width: 20px; height: 20px; color: currentColor; }
 .icon-home { border: 2px solid currentColor; border-top: 0; border-radius: 3px; transform: scale(.68); }
@@ -343,7 +347,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
   .login-paper { min-height: 740px; margin: 32px auto; border-radius: 18px; }
   .login-page { padding: 24px; }
   .app-shell { width: min(100%, 1200px); margin: 24px auto 0; border-radius: 20px 20px 0 0; box-shadow: 0 18px 60px rgba(80, 44, 23, .1); }
-  .bottom-nav { border-radius: 14px 14px 0 0; }
   .page-width { padding-inline: 34px; }
   .home-section, .ladder-section { margin-top: 56px; }
   .action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -52,7 +52,8 @@ const copy = {
     phoneHint: "10 अंकों का मोबाइल नंबर",
     jobHint: "उदाहरण: UP-41-000-982",
     continue: "आगे बढ़ें",
-    mockOtp: "डेमो OTP: 1234",
+    otpServerHint: "यह डेमो है। कोड सर्वर लॉग में दिखेगा, वहीं से डालें।",
+    otpError: "कोड गलत है। सर्वर लॉग से सही कोड डालें।",
     otpTitle: "OTP डालें",
     otpLead: "यह डेमो है। असली SMS नहीं भेजा जाएगा।",
     verify: "देखना शुरू करें",
@@ -193,7 +194,8 @@ const copy = {
     phoneHint: "10-digit mobile number",
     jobHint: "Example: UP-41-000-982",
     continue: "Continue",
-    mockOtp: "Demo OTP: 1234",
+    otpServerHint: "This is a demo. The code prints in the server log — read it there.",
+    otpError: "Wrong code. Check the server log for the right one.",
     otpTitle: "Enter OTP",
     otpLead: "This is a demo. No real SMS will be sent.",
     verify: "Start viewing",
@@ -295,6 +297,15 @@ const jobs = [
   "paid",
 ];
 
+// Clean-path routing (/login, /home, /wage…) via the History API so every
+// screen has a real URL and browser Back/Forward work. #why-made stays an
+// in-page anchor on whatever path you're on.
+const routes = ["landing", "login", "home", "track", "wage", "demand", "grievance", "grievance-status", "profile"];
+function pathToScreen() {
+  const s = window.location.pathname.replace(/^\/+/, "") || "landing";
+  return routes.includes(s) ? s : "landing";
+}
+
 const profiles = [
   {
     id: "delayed",
@@ -302,6 +313,7 @@ const profiles = [
     village: { hi: "मझगवां, चित्रकूट", en: "Majhgawan, Chitrakoot" },
     initials: "स",
     jobCard: "UP-41-000-982",
+    phone: "9876543210",
     days: 11,
     wage: 2530,
     wagePaid: 0,
@@ -316,6 +328,7 @@ const profiles = [
     village: { hi: "कर्वी, चित्रकूट", en: "Karwi, Chitrakoot" },
     initials: "र",
     jobCard: "UP-41-000-614",
+    phone: "9876500614",
     days: 17,
     wage: 3910,
     wagePaid: 3910,
@@ -330,6 +343,7 @@ const profiles = [
     village: { hi: "मानिकपुर, चित्रकूट", en: "Manikpur, Chitrakoot" },
     initials: "म",
     jobCard: "UP-41-000-327",
+    phone: "9876500327",
     days: 8,
     wage: 1840,
     wagePaid: 0,
@@ -344,6 +358,7 @@ const profiles = [
     village: { hi: "पहाड़ी, चित्रकूट", en: "Pahari, Chitrakoot" },
     initials: "आ",
     jobCard: "UP-41-000-845",
+    phone: "9876500845",
     days: 0,
     wage: 0,
     wagePaid: 0,
@@ -369,15 +384,18 @@ function LanguageSwitch({ language, setLanguage, t }) {
   );
 }
 
-function BrandHeader({ language, setLanguage, t, compact = false }) {
+function BrandHeader({ language, setLanguage, t, compact = false, onHome, onBack }) {
   return (
     <header className={`brand-header ${compact ? "compact" : ""}`}>
-      <div className="brand-lockup">
-        <span className="brand-seal" aria-hidden="true"><span /></span>
-        <div>
-          <p className="brand-name">{t.brand}</p>
-          {!compact && <p className="brand-sub">{t.brandSub}</p>}
-        </div>
+      <div className="brand-left">
+        {onBack && <button className="back-button header-back" type="button" onClick={onBack} aria-label={t.back}><Icon name="back" /></button>}
+        <button className="brand-lockup" type="button" onClick={onHome} disabled={!onHome} aria-label={t.brand}>
+          <span className="brand-seal" aria-hidden="true"><span /></span>
+          <div>
+            <p className="brand-name">{t.brand}</p>
+            {!compact && <p className="brand-sub">{t.brandSub}</p>}
+          </div>
+        </button>
       </div>
       <LanguageSwitch language={language} setLanguage={setLanguage} t={t} />
     </header>
@@ -387,7 +405,7 @@ function BrandHeader({ language, setLanguage, t, compact = false }) {
 function WorkerVisual({ t }) {
   return (
     <figure className="worker-visual">
-      <img className="hero-photo" src="/images/worker-field.png" width="900" height="1125" alt={t.landingHeroAlt} fetchPriority="high" />
+      <img className="hero-photo" src="/images/worker-field.png" width="900" height="1125" alt={t.landingHeroAlt} fetchpriority="high" />
       <div className="worker-visual__meta">
         <p className="hero-status">{t.heroStatus}</p>
         <figcaption className="hero-caption">{t.heroCaption}</figcaption>
@@ -396,10 +414,10 @@ function WorkerVisual({ t }) {
   );
 }
 
-function Landing({ t, language, setLanguage, onContinue }) {
+function Landing({ t, language, setLanguage, onContinue, onHome }) {
   return (
     <main className="landing-page">
-      <BrandHeader language={language} setLanguage={setLanguage} t={t} />
+      <BrandHeader language={language} setLanguage={setLanguage} t={t} onHome={onHome} />
       <div className="landing-wrap">
         <section className="landing-hero">
           <div className="landing-hero-copy">
@@ -475,18 +493,21 @@ function Ladder({ t, compact = false, grievance = false, currentStep = 3, previe
   );
 }
 
+function NavIcon({ name }) {
+  const p = { width: 24, height: 24, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true };
+  if (name === "home") return <svg {...p}><path d="M3 10.5 12 3l9 7.5" /><path d="M5.5 9.5V20a1 1 0 0 0 1 1H17.5a1 1 0 0 0 1-1V9.5" /></svg>;
+  if (name === "track") return <svg {...p}><circle cx="4" cy="6" r="1.5" /><circle cx="4" cy="12" r="1.5" /><circle cx="4" cy="18" r="1.5" /><path d="M9 6h11M9 12h11M9 18h11" /></svg>;
+  if (name === "grievance") return <svg {...p}><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5Z" /><path d="M12 8.5v3.5" /><path d="M12 15.5h.01" /></svg>;
+  return <svg {...p}><circle cx="12" cy="8.5" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></svg>;
+}
+
 function BottomNav({ screen, setScreen, t }) {
-  const items = [
-    ["home", t.home, "home"],
-    ["track", t.track, "track"],
-    ["grievance", t.grievance, "alert"],
-    ["profile", t.profile, "person"],
-  ];
+  const items = [["home", t.home], ["track", t.track], ["grievance", t.grievance], ["profile", t.profile]];
   return (
     <nav className="bottom-nav" aria-label={t.navLabel}>
-      {items.map(([key, label, icon]) => (
+      {items.map(([key, label]) => (
         <button className={screen === key ? "selected" : ""} type="button" key={key} onClick={() => setScreen(key)} aria-current={screen === key ? "page" : undefined}>
-          <Icon name={icon} />
+          <NavIcon name={key} />
           <span>{label}</span>
         </button>
       ))}
@@ -494,21 +515,37 @@ function BottomNav({ screen, setScreen, t }) {
   );
 }
 
-function Login({ t, language, setLanguage, onLogin, profileIndex, setProfileIndex }) {
+function Login({ t, language, setLanguage, onLogin, onBack, profileIndex, setProfileIndex }) {
   const [phone, setPhone] = useState("");
   const [jobCard, setJobCard] = useState("");
+  const [otp, setOtp] = useState("");
   const [otpStage, setOtpStage] = useState(false);
+  const [otpError, setOtpError] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  function submit(event) {
+  const post = (path, body) => fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
+  async function submit(event) {
     event.preventDefault();
-    if (!otpStage) setOtpStage(true);
-    else onLogin();
+    setBusy(true);
+    try {
+      if (!otpStage) {
+        await post("/api/otp", { phone }); // server logs the code
+        setOtpStage(true);
+      } else {
+        const { ok } = await (await post("/api/otp/verify", { phone, code: otp })).json();
+        if (ok) onLogin();
+        else setOtpError(true);
+      }
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <main className="login-page">
       <div className="login-paper">
-        <BrandHeader language={language} setLanguage={setLanguage} t={t} />
+        <BrandHeader language={language} setLanguage={setLanguage} t={t} onHome={onBack} onBack={onBack} />
         <div className="login-hero">
           <div className="sun-mark" aria-hidden="true"><span /><span /><span /><span /></div>
           <h1>{t.signIn}</h1>
@@ -524,15 +561,15 @@ function Login({ t, language, setLanguage, onLogin, profileIndex, setProfileInde
             <div className="otp-panel">
               <div className="otp-icon" aria-hidden="true"><span /></div>
               <div><strong>{t.otpTitle}</strong><p>{t.otpLead}</p></div>
-              <input className="otp-input" inputMode="numeric" autoFocus placeholder="1234" aria-label={t.otpTitle} required minLength={4} maxLength={4} />
-              <p className="mock-otp">{t.mockOtp}</p>
+              <input className="otp-input" inputMode="numeric" autoFocus placeholder="••••" aria-label={t.otpTitle} value={otp} onChange={(e) => { setOtp(e.target.value); setOtpError(false); }} required minLength={4} maxLength={4} />
+              {otpError && <p className="mock-otp">{t.otpError}</p>}
             </div>
           )}
-          <button className="primary-button" type="submit">{otpStage ? t.verify : t.continue}<Icon name="arrow" /></button>
+          <button className="primary-button" type="submit" disabled={busy} aria-busy={busy}>{otpStage ? t.verify : t.continue}<Icon name="arrow" /></button>
         </form>
         <div className="profile-picker" aria-label={language === "hi" ? "डेमो प्रोफ़ाइल" : "Demo profiles"}>
           <span>{language === "hi" ? "डेमो प्रोफ़ाइल" : "Demo profiles"}</span>
-          <div>{profiles.map((profile, index) => <button type="button" key={profile.id} className={profileIndex === index ? "selected" : ""} aria-pressed={profileIndex === index} onClick={() => setProfileIndex(index)}><strong>{profile.initials}</strong><small>{profile.name[language]}</small></button>)}</div>
+          <div>{profiles.map((profile, index) => <button type="button" key={profile.id} className={profileIndex === index ? "selected" : ""} aria-pressed={profileIndex === index} onClick={() => { setProfileIndex(index); setPhone(profile.phone); setJobCard(profile.jobCard); }}><strong>{profile.initials}</strong><small>{profile.name[language]}</small></button>)}</div>
         </div>
         <p className="synthetic-note"><span className="note-dot" aria-hidden="true" />{t.synthetic}</p>
       </div>
@@ -636,17 +673,29 @@ function Grievance({ t, setScreen, profile, language }) {
 
 function GrievanceStatus({ t, setScreen }) { return <div className="app-page"><div className="page-width narrow-page"><PageTitle title={t.grievanceTrack} subtitle={t.grievanceId} t={t} onBack={() => setScreen("grievance")} /><section className="feature-panel grievance-panel"><div className="panel-label">{t.grievanceId}</div><h2>{t.grievanceSent}</h2><p>{t.grievanceDraftBody}</p><Ladder t={t} grievance /></section></div></div>; }
 
-function Profile({ t, language, setLanguage, setScreen, profile, profileIndex, setProfileIndex }) { return <div className="app-page"><div className="page-width narrow-page"><PageTitle title={t.profileTitle} subtitle={t.profileNote} t={t} onBack={() => setScreen("home")} /><section className="profile-card"><div className="large-avatar">{profile.initials}</div><h2>{profile.name[language]}</h2><p>{profile.jobCard}</p><span>{profile.village[language]}</span></section><div className="profile-switcher">{profiles.map((item, index) => <button type="button" className={profileIndex === index ? "selected" : ""} aria-pressed={profileIndex === index} key={item.id} onClick={() => setProfileIndex(index)}><span>{item.initials}</span><strong>{item.name[language]}</strong></button>)}</div><div className="settings-list"><button type="button" onClick={() => setLanguage(language === "hi" ? "en" : "hi")}><span>{language === "hi" ? t.english : t.hindi}</span><Icon name="switch" /></button><div><span>{t.dataLabel}</span><strong>{t.syntheticDemo}</strong></div><div><span>{t.versionLabel}</span><strong>{t.hackathonBuild}</strong></div></div></div></div>; }
+function Profile({ t, language, setLanguage, setScreen, profile, profileIndex, setProfileIndex }) { return <div className="app-page"><div className="page-width narrow-page"><PageTitle title={t.profileTitle} subtitle={t.profileNote} t={t} onBack={() => setScreen("home")} /><section className="profile-card"><div className="large-avatar">{profile.initials}</div><h2>{profile.name[language]}</h2><p>{profile.jobCard}</p><span>{profile.village[language]}</span></section><div className="settings-list"><button type="button" onClick={() => setLanguage(language === "hi" ? "en" : "hi")}><span>{language === "hi" ? t.english : t.hindi}</span><Icon name="switch" /></button><div><span>{t.dataLabel}</span><strong>{t.syntheticDemo}</strong></div><div><span>{t.versionLabel}</span><strong>{t.hackathonBuild}</strong></div></div></div></div>; }
 
 function PageTitle({ title, subtitle, t, onBack }) { return <div className="page-title"><button className="back-button" type="button" onClick={onBack} aria-label={t.back}><Icon name="back" /></button><div><h1 data-page-title tabIndex="-1">{title}</h1><p>{subtitle}</p></div></div>; }
 
 function App() {
   const [language, setLanguage] = useState("hi");
-  const [screen, setScreen] = useState("landing");
+  const [screen, setScreen] = useState(pathToScreen);
   const [profileIndex, setProfileIndex] = useState(0);
   const t = useMemo(() => copy[language], [language]);
   const profile = profiles[profileIndex];
   const inApp = !["landing", "login"].includes(screen);
+
+  useEffect(() => {
+    const onPop = () => setScreen(pathToScreen());
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  const go = (s) => {
+    const path = s === "landing" ? "/" : `/${s}`;
+    if (window.location.pathname !== path) window.history.pushState({}, "", path);
+    setScreen(s);
+  };
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -657,18 +706,18 @@ function App() {
     if (inApp) requestAnimationFrame(() => document.querySelector("[data-page-title]")?.focus());
   }, [screen, inApp]);
 
-  if (screen === "landing") return <Landing t={t} language={language} setLanguage={setLanguage} onContinue={() => setScreen("login")} />;
-  if (screen === "login") return <Login t={t} language={language} setLanguage={setLanguage} onLogin={() => setScreen("home")} profileIndex={profileIndex} setProfileIndex={setProfileIndex} />;
+  if (screen === "landing") return <Landing t={t} language={language} setLanguage={setLanguage} onContinue={() => go("login")} onHome={() => go("landing")} />;
+  if (screen === "login") return <Login t={t} language={language} setLanguage={setLanguage} onLogin={() => go("home")} onBack={() => go("landing")} profileIndex={profileIndex} setProfileIndex={setProfileIndex} />;
 
-  const view = screen === "home" ? <Home t={t} setScreen={setScreen} profile={profile} language={language} />
-    : screen === "track" ? <Track t={t} setScreen={setScreen} profile={profile} language={language} />
-    : screen === "wage" ? <Wage t={t} setScreen={setScreen} language={language} profile={profile} />
-          : screen === "demand" ? <Demand t={t} setScreen={setScreen} language={language} />
-          : screen === "grievance" ? <Grievance t={t} setScreen={setScreen} profile={profile} language={language} />
-            : screen === "grievance-status" ? <GrievanceStatus t={t} setScreen={setScreen} />
-              : <Profile t={t} language={language} setLanguage={setLanguage} setScreen={setScreen} profile={profile} profileIndex={profileIndex} setProfileIndex={setProfileIndex} />;
+  const view = screen === "home" ? <Home t={t} setScreen={go} profile={profile} language={language} />
+    : screen === "track" ? <Track t={t} setScreen={go} profile={profile} language={language} />
+    : screen === "wage" ? <Wage t={t} setScreen={go} language={language} profile={profile} />
+          : screen === "demand" ? <Demand t={t} setScreen={go} language={language} />
+          : screen === "grievance" ? <Grievance t={t} setScreen={go} profile={profile} language={language} />
+            : screen === "grievance-status" ? <GrievanceStatus t={t} setScreen={go} />
+              : <Profile t={t} language={language} setLanguage={setLanguage} setScreen={go} profile={profile} profileIndex={profileIndex} setProfileIndex={setProfileIndex} />;
 
-  return <div className="app-shell"><BrandHeader language={language} setLanguage={setLanguage} t={t} compact /><main>{view}</main><BottomNav screen={screen === "grievance-status" ? "grievance" : screen} setScreen={setScreen} t={t} /></div>;
+  return <div className="app-shell"><BrandHeader language={language} setLanguage={setLanguage} t={t} compact onHome={() => go("home")} /><main>{view}</main><BottomNav screen={screen === "grievance-status" ? "grievance" : screen} setScreen={go} t={t} /></div>;
 }
 
 createRoot(document.getElementById("root")).render(<App />);
