@@ -58,7 +58,7 @@ export default function LoginPage() {
               <div className="otp-icon" aria-hidden="true"><span /></div>
               <div><strong>{t.otpTitle}</strong><p>{t.otpLead}</p></div>
               <input className="otp-input" inputMode="numeric" autoFocus placeholder="••••" aria-label={t.otpTitle} value={otp} onChange={(e) => { setOtp(e.target.value); setOtpError(false); }} required minLength={4} maxLength={4} />
-              {otpError && <p className="mock-otp">{t.otpError}</p>}
+              {otpError ? <p className="mock-otp">{t.otpError}</p> : <p className="mock-otp">{t.mockOtp}</p>}
             </div>
           )}
           <button className="primary-button" type="submit" disabled={busy} aria-busy={busy}>{otpStage ? t.verify : t.continue}<Icon name="arrow" /></button>
