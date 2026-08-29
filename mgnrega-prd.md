@@ -1,191 +1,223 @@
-# MGNREGA Portal Revamp — Build Plan & Agent Prompt
-**For: Build What Moves India hackathon | Deadline: Aug 28, 2026, 8:00 PM IST**
+# Mera Rozgar — PRD
 
----
+## One-line pitch
+Mera Rozgar helps rural workers understand delayed MGNREGA wages and raise a
+ready-to-submit grievance in their own language.
 
-## ⚠️ Non-negotiable hackathon rule before anything else
+The official NREGA portal exposes reports, attendance, work, and grievance
+information, but its structure is administrative and report-oriented rather than
+built around a worker's immediate question: **"Where is my money, and what can I
+do now?"** ([nrega.dord.gov.in](https://nrega.dord.gov.in/MGNREGA_new/Nrega_home.aspx))
 
-Your prototype **must be built with Codex or powered by an OpenAI model** — Codex has to be a meaningful part of the build, not bolted on for the demo. Your agentic IDE (Antigravity / Claude Code CLI) can scaffold and write code, but somewhere in the actual product, an OpenAI model needs to do real work. Bake this into the product itself, don't just use it as your coding tool. Suggested real uses (pick one, don't overdo it):
+## Product overview
+Mera Rozgar is a Hindi-first, mobile-first worker tool for understanding and
+acting on delayed MGNREGA wage payments. It converts complex employment records
+into a plain-language wage timeline and uses OpenAI to (1) explain the delay and
+(2) draft a grievance from the worker's own words.
 
-- **Grievance/complaint drafting assistant** — worker describes issue in Hindi/broken English/voice, OpenAI model structures it into a formal complaint with correct scheme references.
-- **Status explainer** — takes raw wage/muster-roll data and explains in plain vernacular language why payment is delayed.
-- **Voice-to-form** — worker speaks their job demand, model fills the structured application.
+The prototype focuses on **one high-value scenario**: a worker has completed
+work, but payment has not arrived. The worker can see the payment journey, ask
+AI to explain the current status, create an editable grievance, and receive a
+mock tracking ID.
 
-Pick ONE of these as your Codex-powered feature. This becomes your differentiator in judging criteria "product thinking."
+The story the demo tells, end to end:
+> "I worked, my money is delayed, I understand why, and I can take action."
 
----
+## Two core features
+1. **Wage Delay Explainer** — AI explains, in plain Hindi/English, why a worker's
+   payment is delayed and what to do next.
+2. **One-Tap Grievance Builder** — AI converts the worker's free-text description
+   into a clear, editable, ready-to-submit complaint.
 
-## 1. The one problem you're solving
+## Scope decision
+Do not build all flows as equal features. Supporting screens stay shallow.
 
-**Problem statement:** A rural MGNREGA worker cannot independently check their job card status, track wage payment delays, or raise a grievance — because the official NREGA portal is a data-transparency dashboard built for auditors and officials, not a usable tool for the worker it's meant to serve. Workers depend on middlemen (panchayat clerks, cyber cafes) to access their own entitlement data.
+| Feature | Priority | Prototype depth |
+|---|---:|---|
+| Mock login | Required | Very shallow |
+| Worker home / status | Required | One polished screen |
+| Wage timeline | Core | Fully interactive |
+| AI wage explanation | Core | Real OpenAI API call |
+| Grievance creation | Core | Fully interactive |
+| AI grievance drafting | Core | Real OpenAI API call |
+| Work-demand application | Removed | Not in prototype |
+| Admin dashboard | Excluded | Do not build |
+| MIS reports | Excluded | Do not build |
+| Real Aadhaar / bank integration | Excluded | Unsafe and unnecessary |
 
-**Who faces it:** Rural daily-wage workers, often first-generation smartphone users, low digital literacy, regional language only, on 2G/3G, often on a shared or basic Android phone.
+The prototype does not connect to real government records. All data is synthetic
+and carries a visible label:
+> यह डेमो नकली जानकारी से बना है। इसमें असली आधार, बैंक या सरकारी रिकॉर्ड का उपयोग नहीं हुआ है।
+> This demo uses synthetic data. No real Aadhaar, bank, or government records are used.
 
-**Why current experience fails:**
-- English/bureaucratic UI, dense tables, no vernacular support
-- Not mobile-optimized, requires desktop-style navigation
-- No plain-language explanation of *why* wages are delayed
-- No self-service grievance flow — worker has no direct channel
+## Problem
+A worker may know wages have not arrived but not know:
+- Whether attendance was recorded.
+- Whether the work was verified.
+- Whether payment was sent.
+- Whether the delay is a bank or verification issue.
+- Which authority or action is appropriate.
+- How to write a formal grievance.
 
----
+The public portal holds this information, but its report-oriented structure
+creates friction for a worker who wants a direct explanation and a next action.
 
-## 2. Citizen journey to build (this is your demo spine)
+## Target user
+Primary:
+- Rural MGNREGA worker.
+- First-generation or low-confidence smartphone user.
+- Hindi or regional-language reader, small Android phone, unreliable connectivity.
+- Wants a quick answer, not a report.
 
-Build this as ONE continuous, working flow. Everything else is secondary.
+Secondary:
+- A family member, local volunteer, or facilitator helping the worker.
 
-1. **Onboard / Login** — phone number + job card number (mock OTP), auto-detects preferred language
-2. **Home / My Status** — plain-language summary card: "Aapka kaam chal raha hai" / "Payment 12 din se pending hai" with a simple icon-first status, not a table
-3. **Demand Work** — simple form: village, dates available, number of days → submit application (mocked backend acknowledgment)
-4. **Track Application** — visual step-tracker (Applied → Work Allotted → Attendance Marked → Wage Processed → Paid), each step in plain language, not government jargon
-5. **Wage & Attendance Detail** — muster roll days worked, wage due, wage paid, and if delayed: plain-language reason (bank issue / fund release delay / verification pending) — **this is where your Codex-powered explainer feature sits**
-6. **Raise Grievance** — one-tap "Mera paisa nahi mila" / "Kaam nahi mila" buttons pre-fill a structured complaint (Codex-powered drafting if you chose that feature), submits with a tracking ID
-7. **Grievance Status** — simple tracker, same visual language as application tracker
+## Goals
+- Explain wage status in under 30 seconds.
+- Show the payment journey without administrative jargon.
+- Give the worker one clear next action.
+- Generate an editable grievance in the worker's language.
+- Demonstrate meaningful use of OpenAI, not a decorative chatbot.
 
-Keep it to these 7 screens. A working shallow flow beats a broad, half-built one — judging weighs "does the main journey actually work."
+## Non-goals
+Real government auth · real Aadhaar/bank verification · real payment processing ·
+official grievance submission · accurate live payment status · full NREGA MIS ·
+admin/officer dashboard · full voice product.
 
----
+## Demo persona
+- **Name:** Sita Devi
+- **Village:** Rampur
+- **Job-card number:** `RJ-XX-2048`
+- **Work:** Pond restoration (तालाब की मरम्मत)
+- **Days worked:** 12
+- **Wages due:** ₹2,568
+- **Muster-roll closure:** 18 August 2026
+- **Current status:** Payment pending (verification pending)
 
-## 3. Information architecture (what NOT to carry over from the real site)
+All values are fictional and marked synthetic. Three additional profiles (paid,
+grievance-in-review, new applicant) exist in mock data and are selectable through
+a small "Demo scenario" control for judges. The main demo uses only Sita Devi.
 
-Drop these from the real NREGA portal, they exist for auditors, not citizens:
-- District/state-wise MIS reports, financial year dropdowns, scheme code tables
-- Raw muster roll number grids
-- Any admin/official-facing report generator
+## Central demo journey (five screens, under 2 minutes)
+1. **Login** — mobile + job-card + OTP (demo OTP printed to the server log).
+   Straight to home after login.
+2. **Home ("My money")** — one status sentence, the amount, three facts
+   (work, days, payment status), and two buttons: "पैसा क्यों रुका है?" and
+   "शिकायत बनाएं".
+3. **Wage status** — the ladder tracker, amount/dates, an expandable
+   "रिकॉर्ड का विवरण" for authentic terms, and an "AI से समझें" button.
+4. **AI explanation** — real `/api/explain-wage` call, shown as
+   **क्या हुआ? / अब क्या करें? / ध्यान दें**.
+5. **Grievance** — issue selection → worker statement → AI draft
+   (`/api/draft-grievance`) → editable preview → mock submission with a tracking ID.
 
-Keep the underlying **data concepts** (job card, muster roll, wage, work demand, grievance) but re-skin every one of them into a citizen-first status object.
-
----
-
-## 4. Design system — tokens for your agent to follow exactly
-
-Ground the visual identity in the subject: rural India, physical labor, sunlight, soil, community — not a generic govt-blue dashboard, and not a generic AI-cream/terracotta SaaS look either.
-
-**Color (name these exactly, don't drift):**
-- `--soil-brown: #6B4226` — primary text / high-emphasis elements, evokes earth/labor
-- `--wheat: #F4E3B2` — warm background base, evokes harvested field
-- `--leaf-green: #4C7A3F` — success/paid/completed states
-- `--sun-amber: #E8912D` — pending/in-progress states, warm not alarming
-- `--terracotta-red: #B5482C` — delayed/attention states — used sparingly, never as a scare color
-- `--ink: #2B2420` — near-black for body text, not pure black
-
-**Type:**
-- Display face: a sturdy, high-legibility slab-serif or humanist sans with strong open counters (renders well at small sizes on cheap screens) — e.g. Mukta or Hind for Devanagari pairing, paired with a geometric sans for Latin/English toggle
-- Body face: same family, regular weight, generous line-height (1.6+) for low-literacy scanning
-- No decorative/script fonts anywhere — legibility over personality here
-
-**Layout concept:**
-- Single-column, thumb-zone-first mobile layout (nothing above the fold requires horizontal scroll)
-- Status shown as **icon + one-line plain sentence**, never a data table, as the primary UI pattern
-- Large tap targets (min 48px), minimal nested navigation — max 2 taps to any core action
-- Bottom nav bar with 3–4 items max: Home, Track, Grievance, Profile
-
-**Signature element:** a **"step ladder" progress tracker** used consistently across both the work-application flow and the grievance flow — visualized as literal rungs (nods to labor/construction, the subject's own vernacular) rather than a generic dotted progress bar. This is the one visual idea the whole product hangs on — don't dilute it with other decorative motifs.
-
-**Language:** Hindi-first (Devanagari) with English toggle, not the reverse. Copy in short, plain sentences — "Aapka paisa 12 din se ruka hai" not "Payment status: Pending disbursement." Follow active-voice, plain-verb writing style throughout — see Writing section of your design skill.
-
-**Motion:** minimal — a single reveal animation when a status step completes (the "rung is climbed"), nothing else. Reduced-motion respected.
-
----
-
-## 5. Mock data strategy (required by brief)
-
-- Fabricate 3–4 sample worker profiles with different states: (1) smooth case fully paid, (2) delayed payment case, (3) grievance-in-progress case, (4) new applicant case
-- Clearly label every mocked element in your submission video/summary: "This uses synthetic job card and wage data, no real Aadhaar/bank/OTP details"
-- Mock OTP = static code shown on screen, don't build real SMS auth
-
----
-
-## 6. Tech stack suggestion (fits your existing tools)
-
-- Frontend: React + Tailwind (works well in Antigravity/Claude Code CLI, fast to scaffold, mobile-first utility classes)
-- State: local mock JSON acting as the "backend" — no real DB needed for a hackathon prototype
-- OpenAI integration: call the API directly from a lightweight backend route (Node/Express or a serverless function) for whichever Codex-powered feature you picked in Section 0 — this is the part that must be real, not mocked
-- Deploy: Vercel or similar so the "live public link" requirement is trivially met
-
----
-
-## 7. Submission checklist (from the brief, don't miss any)
-
-- [ ] Live public link, opens without login wall, includes mock login creds if needed
-- [ ] 2-minute video: minute 1 = citizen demo, minute 2 = how you built it + why (mention Codex usage explicitly)
-- [ ] Project summary, under 250 words
-- [ ] Partner's registered email if team of two, both registered
-- [ ] Clearly disclose what's real vs mocked, in both video and summary
-
----
-
-## 8. Strict prompt for your agentic IDE
-
-Copy everything below into your `.agents` workflow / Antigravity or Claude Code CLI session as the build brief.
-
+The wage ladder:
 ```
-You are building a citizen-facing mobile-first prototype that revamps the
-Indian MGNREGA (NREGA) worker portal for the "Build What Moves India"
-hackathon. Read this entire brief before writing any code.
-
-BEFORE BUILDING:
-Check every skill available in this project's .agents folder and load
-any that are relevant — in particular anything covering frontend design,
-UI/visual design tokens, accessibility, or copywriting. Apply the
-frontend-design skill's process explicitly: brainstorm a compact design
-token plan (color, type, layout, signature element) grounded in this
-brief's subject matter, critique it against generic-AI-design defaults
-(cream+terracotta SaaS look, dark+neon look, broadsheet-hairline look —
-avoid all three), revise, and only then start writing code.
-
-DESIGN TOKENS TO FOLLOW EXACTLY (do not substitute generic defaults):
-- Color: soil-brown #6B4226, wheat #F4E3B2, leaf-green #4C7A3F,
-  sun-amber #E8912D, terracotta-red #B5482C, ink #2B2420
-- Type: humanist sans/slab pairing with strong Devanagari support
-  (e.g. Hind or Mukta family), generous line-height, no decorative fonts
-- Layout: single column, mobile-first, thumb-zone, max 2 taps to any
-  action, bottom nav with 4 items max (Home / Track / Grievance / Profile)
-- Signature element: a "step ladder" progress tracker (literal rungs,
-  not a generic dotted progress bar) reused across both the work
-  application flow and the grievance flow — this is the one visual idea
-  to spend design effort on, keep everything else quiet and disciplined
-- Copy: Hindi-first (Devanagari) with English toggle, short plain
-  sentences, active voice, no bureaucratic jargon. A status like
-  "Payment Pending" must become something like "Aapka paisa 12 din se
-  ruka hai" — plain, specific, no filler
-
-BUILD EXACTLY THIS CITIZEN JOURNEY, NOTHING BROADER:
-1. Login — phone number + job card number, mock OTP
-2. Home — plain-language status summary card (icon + one sentence, no tables)
-3. Demand Work — simple form (village, available dates, days) → submit
-4. Track Application — step-ladder tracker: Applied → Work Allotted →
-   Attendance Marked → Wage Processed → Paid
-5. Wage & Attendance Detail — days worked, wage due/paid, and if delayed,
-   a plain-language reason for the delay
-6. Raise Grievance — one-tap pre-filled complaint buttons, submits with
-   a tracking ID
-7. Grievance Status — same step-ladder visual pattern as step 4
-
-MANDATORY REAL FEATURE (not mocked):
-Integrate an actual OpenAI/Codex-powered feature — not just as a coding
-tool, but as a working part of the product. Use it for [PICK ONE AND
-STATE HERE: wage-delay plain-language explainer OR grievance drafting
-assistant OR voice-to-form work demand]. Wire this to a real API call,
-not a hardcoded response.
-
-DATA:
-Use only mock/synthetic data. Fabricate 3-4 sample worker profiles
-covering: smooth fully-paid case, delayed-payment case, grievance-in-
-progress case, new-applicant case. Never use real Aadhaar, bank, OTP,
-or payment details. Static mock OTP shown on screen is fine.
-
-STACK:
-React + Tailwind, mobile-first utility classes, local mock JSON as the
-data layer, a lightweight backend route for the real OpenAI API call,
-deployable to Vercel for a public link.
-
-QUALITY BAR:
-Responsive down to small mobile viewports, visible keyboard focus states,
-reduced-motion respected, large tap targets (48px minimum), fast load on
-slow connections (no heavy unused libraries, optimize images/fonts).
-Take a screenshot after each major screen is built and self-critique
-against the design tokens before moving to the next screen.
-
-Do not build any admin/official-facing views, MIS reports, or district/
-state dashboards — this product is citizen-facing only.
+काम दर्ज हुआ       ✓
+हाजिरी दर्ज हुई    ✓
+काम की जांच हुई    ✓
+भुगतान भेजा गया    !
+बैंक में पैसा आया   ○
 ```
+Do not surface "FTO", "Stage I/II" as primary labels — keep them under the
+expandable record-details section only.
+
+MGNREGA wage payments are expected within 15 days of muster-roll closure, and
+delays beyond the 16th day can attract compensation at 0.05% of unpaid wages per
+day. The prototype explains this carefully and never presents a calculation as an
+official determination.
+([pib.gov.in](https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=1885507))
+
+## AI feature 1 — Wage explainer
+**Input:** structured wage/attendance data.
+**Output:** one plain-language explanation, one next action, one disclaimer.
+
+Rules:
+- Never invent a transaction ID, official, bank, or payment date.
+- Never claim a grievance was officially filed.
+- Never expose personal financial data beyond synthetic demo data.
+- If the reason is unknown, say it is unknown.
+- Support Hindi and English.
+- Return JSON validated by the backend.
+
+## AI feature 2 — Grievance drafter
+**Input:** worker free-text description, selected issue type, synthetic context.
+**Output:** subject, category, formal complaint body, suggested records, hi/en.
+
+Rules:
+- Preserve the worker's facts; add no invented dates, amounts, names, or allegations.
+- Respectful language, complaint under ~150 words.
+- Worker must edit before submission; show the final text before the mock submit.
+
+## API design
+Two backend routes keep the OpenAI key server-side. Both validate the model
+output and fall back to a synthetic template if no key is configured or the model
+returns malformed JSON, so the demo always completes.
+
+### `POST /api/explain-wage`
+Request:
+```json
+{ "locale": "hi",
+  "wageRecord": { "daysWorked": 12, "wageDue": 2568,
+    "musterRollClosed": "2026-08-18",
+    "currentStage": "payment_processing", "reason": "verification_pending" } }
+```
+Response:
+```json
+{ "configured": true,
+  "summary": "आपकी हाजिरी दर्ज है, लेकिन भुगतान भेजने से पहले की जांच बाकी है।",
+  "nextStep": "ग्राम पंचायत से भुगतान की वर्तमान स्थिति पूछें और जरूरत पड़ने पर शिकायत दर्ज करें।",
+  "disclaimer": "यह synthetic demo record है। असली स्थिति सरकारी रिकॉर्ड से जांचें।" }
+```
+
+### `POST /api/draft-grievance`
+Request:
+```json
+{ "locale": "hi", "issueType": "payment_not_received",
+  "workerStatement": "मैंने 12 दिन काम किया था लेकिन पैसा नहीं मिला।",
+  "context": { "workName": "तालाब की मरम्मत", "daysWorked": 12, "wageDue": 2568 } }
+```
+Response:
+```json
+{ "configured": true,
+  "subject": "मनरेगा मजदूरी का भुगतान प्राप्त नहीं हुआ",
+  "category": "वेतन भुगतान में देरी",
+  "complaint": "मैंने तालाब की मरम्मत के काम में 12 दिन काम किया। मेरी हाजिरी दर्ज की गई थी, लेकिन ₹2,568 की मजदूरी अभी तक प्राप्त नहीं हुई है। कृपया भुगतान की स्थिति की जांच कर लंबित मजदूरी और लागू विलंब-क्षतिपूर्ति के बारे में जानकारी दी जाए।",
+  "suggestedRecords": ["जॉब कार्ड", "हाजिरी का विवरण", "भुगतान की स्थिति"] }
+```
+
+## Route structure
+```
+/                    landing (pitch entry, CTA → /login)
+/login
+/home
+/wage-status
+/ai-explanation
+/grievance
+/grievance-preview
+/grievance-submitted
+/profile             language toggle + synthetic badge (minor)
+```
+Bottom navigation is retained visually (Home · Wage · Grievance · Profile). We do
+not build four separate product areas.
+
+## Evaluation criteria
+| Metric | Target |
+|---|---:|
+| Judge understands the worker's problem | Under 10 seconds |
+| Judge finds payment status | One tap |
+| AI explanation appears | Under 5 seconds, with loading state |
+| Complaint is generated | One interaction after text entry |
+| Complaint remains editable | Always |
+| Main demo completion time | Under 2 minutes |
+| Minimum tap target | 48 × 48 px |
+| Real personal data used | None |
+
+## Two-minute pitch
+> MGNREGA data exists, but a worker should not need to read government tables to
+> know where their wages are. Mera Rozgar focuses on one moment: a worker has
+> completed work, but payment has not arrived. The app turns the payment pipeline
+> into a simple ladder, explains the delay in Hindi using OpenAI, and converts the
+> worker's own words into an editable grievance. It is not a replacement for the
+> government backend — it is a citizen-first layer that makes existing information
+> understandable and actionable.
