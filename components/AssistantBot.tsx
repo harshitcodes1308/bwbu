@@ -158,7 +158,7 @@ export function AssistantBot() {
           <div className="assistant-panel">
             <div className="assistant-head">
               <strong>{t.assistantTitle}</strong>
-              <button type="button" className="assistant-close" onClick={closePanel} aria-label={t.back}>✕</button>
+              <button type="button" className="assistant-close" onClick={closePanel} aria-label={t.back}><Icon name="close" /></button>
             </div>
 
             <div className="assistant-body">

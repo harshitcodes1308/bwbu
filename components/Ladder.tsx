@@ -21,7 +21,7 @@ export function Ladder({ t, compact = false, grievance = false, currentStep = 3,
     <ol className={`ladder ${compact ? "compact-ladder" : ""}`} aria-label={grievance ? t.grievanceTrack : t.ladderTitle}>
       {steps.map(([title, detail, tone, icon], index) => (
         <li className={`ladder-step ${tone} ${tone === "current" ? "climbed" : ""}`} key={`${title}-${index}`} aria-current={tone === "current" ? "step" : undefined}>
-          <div className="rung" aria-hidden="true"><Icon name={tone === "done" ? (index === source.length - 1 ? "paid" : "check") : tone === "current" ? (icon === "check" ? "progress" : icon) : "lock"} /></div>
+          <div className="rung" aria-hidden="true">{tone === "future" ? index + 1 : <Icon name={tone === "done" ? (index === source.length - 1 ? "paid" : "check") : (icon === "check" ? "progress" : icon)} />}</div>
           <div className="step-copy">
             <strong>{title}</strong>
             <span>{detail}</span>

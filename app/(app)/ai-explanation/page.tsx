@@ -61,7 +61,7 @@ export default function AiExplanationPage() {
             <p>{data.disclaimer}</p>
             {!data.configured && <p className="offline-note">{t.aiOfflineNote}</p>}
           </section>
-          <div className="ai-answer" role="status"><span>OpenAI</span></div>
+          <div className="ai-answer" role="status"><span>{t.aiLabel}</span></div>
         </>
       )}
 
