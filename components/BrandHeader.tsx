@@ -28,6 +28,7 @@ export function BrandHeader({ compact = false, onHome, onBack }: { compact?: boo
 
   const navItems = [
     { label: t.home, href: "/home", active: pathname === "/home" || pathname === "/" },
+    { label: t.trackNav, href: "/tracker", active: pathname === "/tracker" },
     { label: t.wageNav, href: "/wage-status", active: pathname === "/wage-status" || pathname === "/ai-explanation" },
     { label: t.grievance, href: "/grievance", active: pathname.startsWith("/grievance") },
     { label: t.profile, href: "/profile", active: pathname === "/profile" },

@@ -6,12 +6,14 @@ import { useApp } from "@/lib/app-context";
 import { NavIcon } from "./icons";
 
 // Which nav item lights up for each route (secondary screens map to their parent).
+// The three grievance screens share one tab so the ladder tracker can have its own.
 const activeFor: Record<string, string> = {
   "/ai-explanation": "wage-status",
   "/demand-work": "home",
   "/voice-help": "home",
   "/grievance-preview": "grievance",
-  "/grievance-submitted": "grievance-status",
+  "/grievance-submitted": "grievance",
+  "/grievance-status": "grievance",
 };
 
 export function BottomNav() {
@@ -20,9 +22,9 @@ export function BottomNav() {
   const active = activeFor[pathname] ?? pathname.replace(/^\//, "");
   const items: [string, string, string][] = [
     ["home", "home", t.home],
-    ["wage-status", "track", t.wageNav],
+    ["tracker", "track", t.trackNav],
+    ["wage-status", "wage", t.wageNav],
     ["grievance", "grievance", t.grievance],
-    ["grievance-status", "status", t.trackNav],
     ["profile", "profile", t.profile],
   ];
   return (

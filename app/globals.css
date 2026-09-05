@@ -3234,5 +3234,234 @@ html:lang(en) .lp-footer-brand strong { font-family: Fraunces, Georgia, serif; }
   .turn-bubble { border: none; padding: 0; }
 }
 
+/* ============================================================================
+   Step-ladder tracker — screens/step_ladder_tracker
+   The render is 1:1 with CSS pixels, so the Stitch measurements transfer directly:
+   1280px container, 8/4 split, 14px ladder beams, 56px rung nodes, 24px card padding.
+   ========================================================================= */
+
+.tr-utility { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 18px; }
+.tr-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.tr-crumbs > span[aria-hidden] { opacity: .45; }
+.tr-crumbs a { display: inline-flex; align-items: center; gap: 5px; color: var(--soil-brown); font-weight: 600; text-decoration: none; }
+.tr-crumbs a:hover { text-decoration: underline; }
+.tr-crumbs strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.tr-utility-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.tr-ghost { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid var(--wheat-border); border-radius: 999px; background: var(--paper); color: var(--soil-brown); font-size: 13px; font-weight: 600; transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+.tr-ghost:hover { background: var(--amber-tint); border-color: var(--sun-amber); }
+.tr-ghost[aria-pressed="true"] { background: var(--sun-amber); border-color: var(--sun-amber); color: var(--paper); }
+.tr-ghost .material-symbols-outlined { font-size: 18px; }
+
+.tr-hero { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.tr-hero-copy { min-width: min(100%, 320px); flex: 1 1 420px; }
+.tr-hero h1 { margin: 12px 0 6px; color: var(--soil-brown); font-size: clamp(28px, 4.4vw, 40px); line-height: 1.1; }
+.tr-hero h1:focus-visible { outline: 3px solid var(--sun-amber); outline-offset: 4px; }
+.tr-subline { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.tr-stage-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--amber-tint); border: 1px solid rgba(232, 145, 45, .35); color: #8A5215; font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+.tr-stage-pill.paid { background: var(--leaf-tint); border-color: rgba(76, 122, 63, .32); color: #2F5326; }
+.tr-stage-pill.grievance { background: var(--terracotta-tint); border-color: rgba(181, 72, 44, .3); color: #8A3520; }
+.tr-stage-pill.new { background: var(--surface-high); border-color: var(--outline-variant); color: var(--muted); }
+.tr-pulse { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: trPulse 1.8s ease-in-out infinite; }
+@keyframes trPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.72); } }
+@media (prefers-reduced-motion: reduce) { .tr-pulse { animation: none; } }
+
+.tr-figure { flex: 0 1 300px; display: flex; align-items: center; gap: 16px; padding: 16px 20px; border: 1px solid var(--wheat-border); border-left: 4px solid var(--sun-amber); border-radius: var(--radius-card); background: linear-gradient(135deg, var(--paper) 0%, var(--amber-tint) 100%); box-shadow: var(--shadow-card); }
+.tr-figure-copy { min-width: 0; flex: 1 1 auto; }
+.tr-figure-label { display: block; color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.tr-figure strong { display: block; margin: 4px 0 2px; color: var(--soil-brown); font-family: "Tiro Devanagari Hindi", Georgia, serif; font-size: 32px; line-height: 1.05; font-variant-numeric: tabular-nums; }
+html:lang(en) .tr-figure strong { font-family: Fraunces, Georgia, serif; }
+.tr-figure-sub { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 13px; }
+.tr-figure-sub .material-symbols-outlined { flex: none; font-size: 15px; color: var(--leaf-green); }
+.tr-figure-ic { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 12px; background: var(--sun-amber); color: var(--paper); box-shadow: 0 6px 16px rgba(232, 145, 45, .32); }
+.tr-figure-ic .material-symbols-outlined { font-size: 28px; }
+.tr-figure-ic.paid { background: var(--leaf-green); box-shadow: 0 6px 16px rgba(76, 122, 63, .3); }
+.tr-figure-ic.grievance { background: var(--terracotta-red); box-shadow: 0 6px 16px rgba(181, 72, 44, .3); }
+.tr-figure-ic.new { background: var(--soil-brown); box-shadow: 0 6px 16px rgba(107, 66, 38, .28); }
+
+.tr-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; padding-top: 24px; }
+@media (min-width: 1024px) { .tr-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; } }
+.tr-main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.tr-side { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+.tr-banner { display: flex; align-items: flex-start; gap: 14px; padding: 18px 20px; border: 1px solid var(--wheat-border); border-left: 4px solid var(--sun-amber); border-radius: var(--radius-card); background: var(--paper); box-shadow: 0 4px 14px rgba(43, 36, 32, .05); }
+.tr-banner.good { border-left-color: var(--leaf-green); background: linear-gradient(135deg, var(--paper) 0%, var(--leaf-tint) 100%); }
+.tr-banner.warn { border-left-color: var(--sun-amber); background: linear-gradient(135deg, var(--paper) 0%, var(--amber-tint) 100%); }
+.tr-banner.neutral { border-left-color: var(--outline-variant); background: linear-gradient(135deg, var(--paper) 0%, var(--surface-low) 100%); }
+.tr-banner > .material-symbols-outlined { flex: none; font-size: 26px; color: var(--soil-brown); }
+.tr-banner > div { flex: 1 1 auto; min-width: 0; }
+.tr-banner strong { display: block; color: var(--soil-brown); font-size: 16px; }
+.tr-banner p { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.tr-banner-cta { flex: none; display: inline-flex; align-items: center; gap: 6px; align-self: center; padding: 9px 15px; border-radius: 999px; background: var(--soil-brown); color: var(--paper); font-size: 13px; font-weight: 700; text-decoration: none; }
+.tr-banner-cta:hover { background: var(--soil-brown-hover); }
+
+.tr-panel { padding: clamp(16px, 3vw, 24px); border: 1px solid var(--line); border-radius: var(--radius-card); background: #fffaf0; box-shadow: var(--shadow-card); }
+.tr-panel-head { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.tr-panel-ic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--soil-brown); color: var(--paper); }
+.tr-panel-ic .material-symbols-outlined { font-size: 24px; }
+.tr-panel-copy { flex: 1 1 240px; min-width: 0; }
+.tr-panel-copy h2 { margin: 0; color: var(--soil-brown); font-size: 21px; line-height: 1.2; }
+.tr-panel-copy p { margin: 3px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.tr-step-count { flex: none; padding: 7px 14px; border-radius: 999px; background: var(--wheat); border: 1px solid var(--wheat-border); color: var(--soil-brown); font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* --- The ladder itself: two timber beams with a diagonal grain, rungs between them -- */
+.rung-ladder { position: relative; padding: 16px 0; }
+.rung-beam { position: absolute; top: 0; bottom: 0; width: 14px; border-radius: 999px; background: linear-gradient(to bottom, var(--soil-brown), #502C12, var(--soil-brown)); box-shadow: inset 0 2px 4px rgba(0, 0, 0, .4); overflow: hidden; }
+.rung-beam::after { content: ""; position: absolute; inset: 0; opacity: .2; background: repeating-linear-gradient(45deg, transparent 0 6px, #000 6px 10px); }
+.beam-left { left: 0; }
+.beam-right { right: 0; display: none; }
+@media (min-width: 640px) { .beam-right { display: block; } }
+
+.rung-list { display: flex; flex-direction: column; gap: 18px; margin: 0; padding: 0; list-style: none; }
+.rung-row { position: relative; }
+/* The horizontal cross-bar. It spans the whole row, so it tucks under both beams and
+   only its ends show in the gap the card's margin leaves — that gap is what makes the
+   stack read as rungs between two rails. */
+.rung-bar { position: absolute; z-index: 0; inset-inline: 0; top: 50%; height: 16px; transform: translateY(-50%); border-radius: 4px; background: rgba(107, 66, 38, .2); }
+.rung-row.done .rung-bar { background: rgba(76, 122, 63, .3); }
+.rung-row.current .rung-bar { height: 22px; border-radius: 999px; background: rgba(232, 145, 45, .4); box-shadow: 0 0 12px rgba(232, 145, 45, .4); }
+
+/* 34px = the 14px beam plus a 20px reveal of the cross-bar on each side. */
+.rung-card { position: relative; z-index: 1; display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 0 16px; margin-inline: 34px 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--paper); box-shadow: 0 4px 12px rgba(43, 36, 32, .06); }
+@media (min-width: 640px) { .rung-card { margin-inline: 34px; } }
+@media (min-width: 768px) { .rung-card { grid-template-columns: 48px minmax(0, 1fr) 150px; } }
+.rung-col { min-width: 0; }
+.rung-node { align-self: start; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--surface-high); color: var(--muted); box-shadow: 0 2px 6px rgba(43, 36, 32, .1); }
+.rung-node .material-symbols-outlined { font-size: 26px; }
+.rung-row.done .rung-node { background: var(--leaf-green); color: var(--paper); }
+.rung-row.current .rung-node { background: var(--sun-amber); color: var(--paper); box-shadow: 0 0 0 5px rgba(232, 145, 45, .18), 0 8px 20px rgba(232, 145, 45, .34); animation: trPulse 2.4s ease-in-out infinite; }
+.rung-row.future .rung-card { background: var(--wheat-surface); }
+.rung-row.current .rung-card { border-color: var(--sun-amber); background: linear-gradient(135deg, #FFFDF9 0%, var(--amber-tint) 100%); box-shadow: 0 10px 28px rgba(232, 145, 45, .2); }
+.rung-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+.rung-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 5px; background: var(--surface-high); color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+.rung-row.done .rung-badge { background: rgba(76, 122, 63, .13); color: var(--leaf-green); }
+.rung-row.current .rung-badge { background: var(--sun-amber); color: var(--paper); }
+.rung-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; background: var(--paper); border: 1px solid rgba(232, 145, 45, .4); color: #8A5215; font-size: 11px; font-weight: 700; }
+.rung-pill .material-symbols-outlined { font-size: 14px; }
+.rung-when { margin-inline-start: auto; color: var(--muted); font-size: 12px; }
+.rung-title { display: flex; align-items: baseline; gap: 9px; margin: 0 0 6px; color: var(--soil-brown); font-size: 18px; line-height: 1.28; }
+.rung-num { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--wheat); color: var(--soil-brown); font-family: Inter, sans-serif; font-size: 12px; font-weight: 800; }
+.rung-row.current .rung-num { background: var(--sun-amber); color: var(--paper); }
+.rung-body { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.rung-meter { margin-top: 14px; }
+.rung-meter-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; font-size: 12px; color: var(--muted); }
+.rung-meter-head strong { color: #8A5215; }
+.rung-meter-track { height: 10px; border-radius: 999px; background: rgba(232, 145, 45, .18); overflow: hidden; }
+.rung-meter-fill { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--sun-amber), #D97706); transition: width 600ms var(--ease-out); }
+.rung-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.rung-meta { display: flex; flex-direction: column; gap: 2px; grid-column: 1 / -1; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+@media (min-width: 768px) { .rung-meta { grid-column: 3; grid-row: 1; align-items: flex-end; margin: 0; padding: 0 0 0 16px; border-top: 0; border-inline-start: 1px dashed var(--line); text-align: end; } }
+.rung-meta-label { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.rung-meta-value { color: var(--soil-brown); font-size: 14px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.rung-meta-note { color: var(--muted); font-size: 12px; }
+
+.tr-solid { display: inline-flex; align-items: center; gap: 7px; padding: 11px 18px; border: 0; border-radius: var(--radius-btn); background: var(--soil-brown); color: var(--paper); font-size: 14px; font-weight: 700; text-decoration: none; transition: background 160ms var(--ease-out); }
+.tr-solid:hover { background: var(--soil-brown-hover); }
+.tr-outline { display: inline-flex; align-items: center; gap: 7px; padding: 11px 18px; border: 1.5px solid var(--soil-brown); border-radius: var(--radius-btn); background: transparent; color: var(--soil-brown); font-size: 14px; font-weight: 700; text-decoration: none; transition: background 160ms var(--ease-out); }
+.tr-outline:hover { background: var(--wheat); }
+.tr-solid.sm, .tr-outline.sm { padding: 8px 14px; font-size: 13px; }
+.tr-solid .material-symbols-outlined, .tr-outline .material-symbols-outlined { font-size: 18px; }
+
+.tr-rule { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 20px 0 0; padding: 14px 16px; border: 1px dashed var(--wheat-border); border-radius: var(--radius-btn); background: var(--paper-deep); color: var(--muted); font-size: 13px; line-height: 1.55; }
+.tr-rule > .material-symbols-outlined { flex: none; font-size: 20px; color: var(--soil-brown); }
+.tr-rule > span:not(.material-symbols-outlined) { flex: 1 1 240px; min-width: 0; }
+.tr-rule a { display: inline-flex; align-items: center; gap: 4px; color: var(--soil-brown); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.tr-rule a:hover { text-decoration: underline; }
+
+/* --- Sidebar: passbook, photo evidence, assistance ------------------------- */
+.tr-card { padding: 20px; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--paper); box-shadow: var(--shadow-card); }
+.tr-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.tr-card-head h3 { margin: 0; color: var(--soil-brown); font-size: 17px; line-height: 1.25; }
+.tr-chip { flex: none; padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: 700; letter-spacing: .03em; }
+.tr-chip.green { background: var(--leaf-tint); color: var(--leaf-green); }
+.tr-rows { display: flex; flex-direction: column; gap: 10px; margin: 0 0 16px; }
+.tr-rows > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.tr-rows dt { color: var(--muted); font-size: 13px; }
+.tr-rows dd { margin: 0; color: var(--ink); font-size: 13px; font-weight: 600; text-align: end; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+.tr-photo { position: relative; margin: 0; border-radius: 12px; overflow: hidden; background: var(--surface-high); }
+/* 332x110 is the exact pixel size of the crop taken out of the Stitch render. `height`
+   must be reset because the <img height> attribute is a presentational hint that would
+   otherwise pin the frame to 110px and turn the photo into a slit on narrow layouts,
+   where the sidebar card goes full width. */
+.tr-photo img { display: block; width: 100%; height: auto; aspect-ratio: 332 / 110; object-fit: cover; }
+.tr-photo figcaption { position: absolute; inset: auto 0 0 0; display: flex; flex-direction: column; gap: 2px; padding: 26px 12px 10px; background: linear-gradient(to top, rgba(0, 0, 0, .82) 0%, rgba(0, 0, 0, .3) 60%, transparent 100%); color: #fff; }
+.tr-photo-stamp { color: var(--wheat); font-size: 11px; font-weight: 700; letter-spacing: .03em; }
+.tr-photo-geo { font-size: 12px; line-height: 1.35; }
+.tr-mate { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 12px; border-radius: var(--radius-btn); background: var(--surface-low); }
+.tr-mate > .material-symbols-outlined { flex: none; font-size: 24px; color: var(--soil-brown); }
+.tr-mate strong { display: block; color: var(--ink); font-size: 13px; }
+.tr-mate span:not(.material-symbols-outlined) { display: block; color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+.tr-help { border: 2px solid var(--wheat-border); background: linear-gradient(135deg, var(--wheat-surface) 0%, rgba(244, 227, 178, .55) 55%, rgba(243, 226, 177, .8) 100%); }
+.tr-help-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.tr-help-ic { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--soil-brown); color: var(--paper); }
+.tr-help-ic .material-symbols-outlined { font-size: 26px; }
+.tr-help-head h3 { margin: 0; color: var(--soil-brown); font-size: 17px; line-height: 1.25; }
+.tr-help-body { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.tr-voice { padding: 14px; border: 1px solid var(--wheat-border); border-radius: var(--radius-btn); background: rgba(255, 253, 247, .8); }
+.tr-voice-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.tr-voice-head strong { color: var(--soil-brown); font-size: 13px; }
+.tr-avail { display: inline-flex; align-items: center; gap: 5px; color: var(--leaf-green); font-size: 11px; font-weight: 700; }
+.tr-avail i { width: 7px; height: 7px; border-radius: 50%; background: var(--leaf-green); animation: trPulse 1.8s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .tr-avail i, .rung-row.current .rung-node { animation: none; } }
+.tr-voice-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px; border-radius: var(--radius-btn); background: var(--soil-brown); color: var(--paper); font-size: 13px; font-weight: 700; line-height: 1.35; text-align: center; text-decoration: none; transition: background 160ms var(--ease-out); }
+.tr-voice-btn:hover { background: var(--soil-brown-hover); }
+.tr-voice-btn .material-symbols-outlined { flex: none; font-size: 20px; }
+.tr-fast { display: grid; gap: 8px; margin-top: 12px; }
+@media (min-width: 480px) { .tr-fast { grid-template-columns: 1fr 1fr; } .tr-tollfree { grid-column: 1 / -1; } }
+.tr-fast a { display: flex; align-items: center; gap: 8px; padding: 11px 13px; border: 1px solid var(--wheat-border); border-radius: var(--radius-btn); background: var(--paper); color: var(--soil-brown); font-size: 13px; font-weight: 600; text-decoration: none; transition: background 160ms var(--ease-out); }
+.tr-fast a:hover { background: var(--amber-tint); }
+.tr-fast .material-symbols-outlined { flex: none; font-size: 19px; }
+.tr-tollfree small { display: block; color: var(--muted); font-size: 11px; font-weight: 600; }
+.tr-tollfree strong { display: block; font-size: 14px; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+
+/* Bridge from the summary ladder on /wage-status to the full tracker. */
+.track-panel-more { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding: 12px 14px; border: 1px solid var(--wheat-border); border-radius: var(--radius-btn); background: var(--wheat-surface); color: var(--soil-brown); font-size: 14px; font-weight: 700; text-decoration: none; transition: background 160ms var(--ease-out); }
+.track-panel-more:hover { background: var(--amber-tint); }
+.track-panel-more .material-symbols-outlined { flex: none; font-size: 20px; }
+.track-panel-more .material-symbols-outlined:last-child { margin-inline-start: auto; font-size: 18px; }
+
+/* --- "Why is step 4 late?" dialog ----------------------------------------- */
+.tr-modal-scrim { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 20px; background: rgba(43, 36, 32, .55); backdrop-filter: blur(3px); animation: trFade 180ms var(--ease-out); }
+.tr-modal { width: min(100%, 520px); max-height: calc(100dvh - 40px); overflow-y: auto; padding: 22px; border: 1px solid var(--wheat-border); border-radius: var(--radius-card); background: var(--paper); box-shadow: 0 26px 60px rgba(43, 36, 32, .34); animation: trRise 220ms var(--ease-out); }
+.tr-modal-head { display: grid; grid-template-columns: 48px minmax(0, 1fr) 32px; align-items: center; gap: 12px; margin-bottom: 14px; }
+.tr-modal-ic { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--amber-tint); color: var(--sun-amber); }
+.tr-modal-ic .material-symbols-outlined { font-size: 26px; }
+.tr-modal-head h2 { margin: 0; color: var(--soil-brown); font-size: 19px; line-height: 1.3; }
+.tr-modal-x { display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 50%; background: var(--surface-low); color: var(--muted); cursor: pointer; transition: background 160ms var(--ease-out); }
+.tr-modal-x:hover { background: var(--surface-high); }
+.tr-modal-lead { margin: 0 0 14px; color: var(--ink); font-size: 14px; line-height: 1.65; }
+.tr-blocker { padding: 14px; border-inline-start: 4px solid var(--sun-amber); border-radius: var(--radius-btn); background: var(--amber-tint); }
+.tr-blocker strong { display: block; margin-bottom: 4px; color: #8A5312; font-size: 12px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+.tr-blocker p { margin: 0; color: var(--ink); font-size: 13px; line-height: 1.6; }
+.tr-modal-note { display: flex; gap: 9px; margin: 14px 0 0; padding: 13px; border-radius: var(--radius-btn); background: var(--leaf-tint); color: #35592C; font-size: 13px; line-height: 1.6; }
+.tr-modal-note .material-symbols-outlined { flex: none; font-size: 19px; }
+.tr-modal-actions { display: grid; gap: 10px; margin-top: 18px; }
+@media (min-width: 480px) { .tr-modal-actions { grid-template-columns: 1fr 1fr; } }
+@keyframes trFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes trRise { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tr-modal-scrim, .tr-modal { animation: none; } }
+
+/* --- Printed receipt: keep the ladder, drop the chrome -------------------- */
+@media print {
+  .tracker-page .tr-utility-actions,
+  .tracker-page .tr-side,
+  .tracker-page .tr-banner-cta,
+  .tracker-page .rung-actions,
+  .tracker-page .tr-modal-scrim { display: none !important; }
+  .tracker-page .tr-grid { display: block; padding-top: 12px; }
+  .tracker-page .tr-hero,
+  .tracker-page .tr-panel,
+  .tracker-page .rung-card { box-shadow: none; }
+  .tracker-page .rung-row { break-inside: avoid; }
+  .tracker-page .rung-row.current .rung-node { animation: none; box-shadow: none; }
+  .tracker-page .tr-pulse { animation: none; }
+}
+
+
+
+
+
+
 
 

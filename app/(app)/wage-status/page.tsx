@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/app-context";
 import { fill } from "@/lib/copy";
@@ -257,6 +258,13 @@ export default function WageStatusPage() {
               <h2>{profile.status[language]}</h2>
               <p>{profile.detail[language]}</p>
               <Ladder t={t} currentStep={profile.step} />
+              {/* The compact ladder above is a summary; /tracker is the same five rungs
+                  with dates, muster-roll ids and the delay explanation. */}
+              <Link className="track-panel-more" href="/tracker">
+                <span className="material-symbols-outlined" aria-hidden="true">stairs</span>
+                {t.trViewFull}
+                <span className="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+              </Link>
             </section>
 
             {/* Expandable Official Record Details */}
