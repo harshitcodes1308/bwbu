@@ -5,7 +5,8 @@
     "village": "Rampur",
     "workName": "Pond restoration",
     "status": "Your payment of ₹2,568 is currently delayed",
-    "detail": "Attendance is recorded, but the check before payment is sent is not yet complete."
+    "detail": "Attendance is recorded, but the check before payment is sent is not yet complete.",
+    "bank": "Rajasthan Marudhara Gramin Bank"
   },
   {
     "id": "paid",
@@ -13,7 +14,8 @@
     "village": "Karwi, Chitrakoot",
     "workName": "Canal digging",
     "status": "Your full wage has arrived",
-    "detail": "Wages for 17 days were sent to the bank account."
+    "detail": "Wages for 17 days were sent to the bank account.",
+    "bank": "Baroda UP Bank"
   },
   {
     "id": "grievance",
@@ -21,7 +23,8 @@
     "village": "Manikpur, Chitrakoot",
     "workName": "Road work",
     "status": "Your attendance grievance is in review",
-    "detail": "The grievance was sent to the panchayat and is being reviewed."
+    "detail": "The grievance was sent to the panchayat and is being reviewed.",
+    "bank": "Baroda UP Bank"
   },
   {
     "id": "new",
@@ -29,6 +32,7 @@
     "village": "Pahari, Chitrakoot",
     "workName": "Work not yet assigned",
     "status": "Your new application was received",
-    "detail": "The panchayat will now provide a work date."
+    "detail": "The panchayat will now provide a work date.",
+    "bank": "Baroda UP Bank"
   }
 ]

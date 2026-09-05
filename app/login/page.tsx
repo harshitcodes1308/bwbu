@@ -6,6 +6,7 @@ import { useApp } from "@/lib/app-context";
 import { profiles } from "@/lib/profiles";
 import { BrandHeader } from "@/components/BrandHeader";
 import { Icon } from "@/components/icons";
+import { Avatar } from "@/components/Avatar";
 
 export default function LoginPage() {
   const { t, language, profileIndex, setProfileIndex } = useApp();
@@ -65,7 +66,7 @@ export default function LoginPage() {
         </form>
         <div className="profile-picker" aria-label={t.demoProfiles}>
           <span>{t.demoProfiles}</span>
-          <div>{profiles.map((profile, index) => <button type="button" key={profile.id} className={profileIndex === index ? "selected" : ""} aria-pressed={profileIndex === index} onClick={() => { setProfileIndex(index); setPhone(profile.phone); setJobCard(profile.jobCard); }}><strong>{profile.initials}</strong><small>{profile.name[language]}</small></button>)}</div>
+          <div>{profiles.map((profile, index) => <button type="button" key={profile.id} className={profileIndex === index ? "selected" : ""} aria-pressed={profileIndex === index} onClick={() => { setProfileIndex(index); setPhone(profile.phone); setJobCard(profile.jobCard); }}><span className="picker-avatar"><Avatar profileId={profile.id} size={38} alt={profile.name[language]} /></span><small>{profile.name[language]}</small></button>)}</div>
         </div>
         <p className="synthetic-note"><span className="note-dot" aria-hidden="true" />{t.synthetic}</p>
       </div>

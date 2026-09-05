@@ -12,3 +12,8 @@ export const LANGS = [
 export type Lang = (typeof LANGS)[number]["code"];
 
 export const LANG_CODES = LANGS.map((l) => l.code) as Lang[];
+
+// BCP-47 tags for the six languages. Used for Intl date/number formatting and,
+// in lib/speech.ts, for Web Speech recognition and synthesis. Deliberately typed
+// loosely so callers holding a plain string can index it with a `?? "hi-IN"` guard.
+export const LOCALE_TAG: Record<string, string> = { hi: "hi-IN", bn: "bn-IN", mr: "mr-IN", te: "te-IN", ta: "ta-IN", en: "en-IN" };

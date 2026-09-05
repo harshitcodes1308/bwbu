@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useApp } from "@/lib/app-context";
+import { BCP47, speak as speakAloud, stopSpeaking } from "@/lib/speech";
 import { Icon, NavIcon } from "./icons";
 
-// Web Speech API locale codes (native browser STT/TTS — no dependency).
-const BCP47: Record<string, string> = { hi: "hi-IN", bn: "bn-IN", mr: "mr-IN", te: "te-IN", ta: "ta-IN", en: "en-IN" };
 const ACTION_ROUTE: Record<string, string> = { open_grievance: "/grievance", show_status: "/grievance-status", explain_wage: "/ai-explanation" };
 
 export function AssistantBot() {
   const { t, language, profile } = useApp();
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [listening, setListening] = useState(false);
   const [thinking, setThinking] = useState(false);
@@ -23,50 +23,15 @@ export function AssistantBot() {
   const recRef = useRef<any>(null);
   const keepListeningRef = useRef(false);
   const finalRef = useRef("");
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const SR = typeof window !== "undefined" && ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
     setMicOk(!!SR);
   }, []);
 
-  // Fallback: browser Web Speech (only works for languages the device has a voice for).
-  function webSpeak(text: string) {
-    try {
-      const s = window.speechSynthesis;
-      if (!s) return;
-      s.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = BCP47[language] ?? "hi-IN";
-      const base = (BCP47[language] ?? "hi-IN").split("-")[0];
-      const v = s.getVoices().find((x) => x.lang === BCP47[language]) || s.getVoices().find((x) => x.lang?.toLowerCase().startsWith(base));
-      if (v) u.voice = v;
-      s.speak(u);
-    } catch { /* best-effort */ }
-  }
-
-  // Prefer server TTS (multilingual); fall back to Web Speech if unavailable.
-  async function speak(text: string) {
-    if (!text) return;
-    try { window.speechSynthesis?.cancel(); } catch { /* noop */ }
-    try { audioRef.current?.pause(); } catch { /* noop */ }
-    try {
-      const res = await fetch("/api/speak", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, locale: language }),
-      });
-      if (res.ok && res.headers.get("content-type")?.includes("audio")) {
-        const url = URL.createObjectURL(await res.blob());
-        const audio = new Audio(url);
-        audioRef.current = audio;
-        audio.onended = () => URL.revokeObjectURL(url);
-        await audio.play();
-        return;
-      }
-    } catch { /* fall through to Web Speech */ }
-    webSpeak(text);
-  }
+  // The voice help screen is this assistant, full size. A floating mic that opens a
+  // smaller copy of it on top would just be a second mic competing with the real one.
+  if (pathname === "/voice-help") return null;
 
   async function send(text: string) {
     const q = text.trim();
@@ -85,7 +50,7 @@ export function AssistantBot() {
       const data = await res.json();
       setReply(data.reply || "");
       setAction(ACTION_ROUTE[data.action] ? data.action : "none");
-      speak(data.reply || "");
+      speakAloud(data.reply || "", language);
     } catch {
       setReply(t.assistantMicUnavailable);
     } finally {
@@ -139,8 +104,7 @@ export function AssistantBot() {
   function closePanel() {
     keepListeningRef.current = false;
     try { recRef.current?.stop(); } catch { /* noop */ }
-    try { window.speechSynthesis?.cancel(); } catch { /* noop */ }
-    try { audioRef.current?.pause(); } catch { /* noop */ }
+    stopSpeaking();
     setListening(false);
     setOpen(false);
   }
@@ -158,7 +122,18 @@ export function AssistantBot() {
           <div className="assistant-panel">
             <div className="assistant-head">
               <strong>{t.assistantTitle}</strong>
-              <button type="button" className="assistant-close" onClick={closePanel} aria-label={t.back}><Icon name="close" /></button>
+              <span className="assistant-head-actions">
+                <button
+                  type="button"
+                  className="assistant-expand"
+                  onClick={() => { closePanel(); router.push("/voice-help"); }}
+                  aria-label={t.voiceFullPageCta}
+                  title={t.voiceFullPageCta}
+                >
+                  <span className="material-symbols-outlined" aria-hidden="true">open_in_full</span>
+                </button>
+                <button type="button" className="assistant-close" onClick={closePanel} aria-label={t.back}><Icon name="close" /></button>
+              </span>
             </div>
 
             <div className="assistant-body">

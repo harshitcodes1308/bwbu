@@ -32,11 +32,33 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const t = useMemo(() => copy[language], [language]);
 
   useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem("mr_lang") as Lang;
+      if (savedLang && ["hi", "en", "bn", "mr", "ta", "te"].includes(savedLang)) setLanguage(savedLang);
+      const savedProf = localStorage.getItem("mr_prof");
+      if (savedProf !== null && !isNaN(Number(savedProf))) {
+        const idx = Number(savedProf);
+        if (idx >= 0 && idx < profiles.length) setProfileIndex(idx);
+      }
+    } catch {}
+  }, []);
+
+  const handleSetLanguage = (l: Lang) => {
+    setLanguage(l);
+    try { localStorage.setItem("mr_lang", l); } catch {}
+  };
+
+  const handleSetProfileIndex = (i: number) => {
+    setProfileIndex(i);
+    try { localStorage.setItem("mr_prof", String(i)); } catch {}
+  };
+
+  useEffect(() => {
     document.documentElement.lang = language;
     document.title = language === "hi" ? "मेरा रोज़गार | MGNREGA" : "Mera Rozgar | MGNREGA";
   }, [language]);
 
-  const value: AppState = { language, setLanguage, t, profileIndex, setProfileIndex, profile: profiles[profileIndex], draft, setDraft };
+  const value: AppState = { language, setLanguage: handleSetLanguage, t, profileIndex, setProfileIndex: handleSetProfileIndex, profile: profiles[profileIndex], draft, setDraft };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 

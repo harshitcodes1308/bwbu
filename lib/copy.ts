@@ -12,3 +12,7 @@ export const copy: Record<Lang, typeof hi> = { hi, en, bn, mr, te, ta };
 
 export type Copy = typeof hi;
 export type { Lang };
+
+// Substitutes the single {n} placeholder used by the counted strings ("{n} दिन शेष").
+// Locale copy is authored with one placeholder per key, so a plain replace is enough.
+export const fill = (s: string, n: number | string) => s.replace("{n}", String(n));

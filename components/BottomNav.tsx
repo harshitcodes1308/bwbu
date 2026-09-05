@@ -8,6 +8,8 @@ import { NavIcon } from "./icons";
 // Which nav item lights up for each route (secondary screens map to their parent).
 const activeFor: Record<string, string> = {
   "/ai-explanation": "wage-status",
+  "/demand-work": "home",
+  "/voice-help": "home",
   "/grievance-preview": "grievance",
   "/grievance-submitted": "grievance-status",
 };

@@ -23,8 +23,27 @@ export function Ladder({ t, compact = false, grievance = false, currentStep = 3,
         <li className={`ladder-step ${tone} ${tone === "current" ? "climbed" : ""}`} key={`${title}-${index}`} aria-current={tone === "current" ? "step" : undefined}>
           <div className="rung" aria-hidden="true">{tone === "future" ? index + 1 : <Icon name={tone === "done" ? (index === source.length - 1 ? "paid" : "check") : (icon === "check" ? "progress" : icon)} />}</div>
           <div className="step-copy">
-            <strong>{title}</strong>
-            <span>{detail}</span>
+            {compact ? (
+              <>
+                <strong>{title}</strong>
+                <span>{detail}</span>
+              </>
+            ) : (
+              <>
+                <div className="step-tag-row">
+                  <span className={`step-badge ${tone}`}>
+                    {tone === "done" ? t.stepDone : tone === "current" ? t.stepActive : t.stepUpcoming}
+                  </span>
+                  <span className="step-date-detail">{detail}</span>
+                </div>
+                <strong>{title}</strong>
+                {tone === "current" && (
+                  <div className="step-progress-meter" aria-hidden="true">
+                    <div className="progress-track"><div className="progress-fill" style={{ width: "80%" }} /></div>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </li>
       ))}
