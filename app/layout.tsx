@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppProvider } from "@/lib/app-context";
+import { ServiceWorker } from "@/components/ServiceWorker";
 
 export const metadata: Metadata = {
   title: "मेरा रोज़गार | MGNREGA worker portal",
   description: "मेरा रोज़गार: MGNREGA काम, मज़दूरी और शिकायत की साफ़ जानकारी।",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "मेरा रोज़गार" },
+  icons: { icon: "/images/emblem.png", apple: "/images/emblem.png" },
 };
 
 export const viewport: Viewport = {
@@ -24,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <AppProvider>{children}</AppProvider>
+        <ServiceWorker />
       </body>
     </html>
   );

@@ -2,8 +2,9 @@
 
 import { useApp } from "@/lib/app-context";
 import { Icon } from "./icons";
+import { ReadAloud } from "./ReadAloud";
 
-export function PageTitle({ title, subtitle, onBack }: { title: string; subtitle: string; onBack: () => void }) {
+export function PageTitle({ title, subtitle, onBack, readAloud }: { title: string; subtitle: string; onBack: () => void; readAloud?: string }) {
   const { t } = useApp();
   return (
     <div className="page-title">
@@ -12,6 +13,7 @@ export function PageTitle({ title, subtitle, onBack }: { title: string; subtitle
         <h1 data-page-title tabIndex={-1}>{title}</h1>
         <p>{subtitle}</p>
       </div>
+      {readAloud && <ReadAloud text={readAloud} className="page-title-audio" />}
     </div>
   );
 }

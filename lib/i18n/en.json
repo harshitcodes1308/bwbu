@@ -557,5 +557,20 @@
   "trBody2Pending": "The panchayat will assign the work; the muster roll number and worksite appear here once it does.",
   "trBody4Pending": "The daily rate is fixed at ₹{n}. The total appears here as soon as attendance is recorded.",
   "trBody4Done": "Daily rate ₹{n} × {n} days = ₹{n}. The Programme Officer signed the wage sheet and the FTO was issued.",
-  "trBody5Done": "The amount was credited straight to your {n} account (A/C {n}). Do check the entry against your passbook."
+  "trBody5Done": "The amount was credited straight to your {n} account (A/C {n}). Do check the entry against your passbook.",
+  "a11yTitle": "Easy reading",
+  "largeText": "Large text",
+  "highContrast": "High contrast",
+  "a11ySub": "Make text bigger or colours sharper.",
+  "householdTitle": "Job cards on this phone",
+  "allowanceTitle": "Unemployment allowance due",
+  "allowanceLead": "It's been {n} days since you asked for work. By law, if work isn't given within {n} days, an allowance is due.",
+  "allowanceDueLabel": "Estimated allowance",
+  "allowanceDaysNote": "for {n} days (demo estimate)",
+  "allowanceNote": "This is a demo estimate. Confirm the exact amount with the panchayat/block office.",
+  "allowanceCta": "Claim the allowance",
+  "distanceAway": "{n} km away",
+  "gramPanchayat": "Gram Panchayat office",
+  "callGrs": "Call Rozgar Sahayak",
+  "getDirections": "Get directions"
 }

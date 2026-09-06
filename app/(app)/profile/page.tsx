@@ -29,7 +29,7 @@ function splitQuota(days: number, wagePaid: number) {
 }
 
 export default function ProfilePage() {
-  const { t, language, setLanguage, profile, profileIndex, setProfileIndex } = useApp();
+  const { t, language, setLanguage, profile, profileIndex, setProfileIndex, textLarge, setTextLarge, highContrast, setHighContrast } = useApp();
   const router = useRouter();
   const [toast, setToast] = useState<{ title: string; body: string } | null>(null);
   const [voiceOn, setVoiceOn] = useState(true);
@@ -323,6 +323,24 @@ export default function ProfilePage() {
                 <span className="material-symbols-outlined" aria-hidden="true">signal_cellular_alt_2_bar</span>
                 <span>{t.towerInfo}</span>
               </p>
+            </div>
+
+            <div className="pref-card">
+              <h3>
+                <span className="material-symbols-outlined amber" aria-hidden="true">accessibility_new</span>
+                {t.a11yTitle}
+              </h3>
+              <p>{t.a11ySub}</p>
+              <label className="pref-toggle-row">
+                <span><strong>{t.largeText}</strong></span>
+                <input type="checkbox" checked={textLarge} onChange={(e) => setTextLarge(e.target.checked)} />
+                <span className="pref-switch" aria-hidden="true" />
+              </label>
+              <label className="pref-toggle-row">
+                <span><strong>{t.highContrast}</strong></span>
+                <input type="checkbox" checked={highContrast} onChange={(e) => setHighContrast(e.target.checked)} />
+                <span className="pref-switch" aria-hidden="true" />
+              </label>
             </div>
           </div>
         </section>

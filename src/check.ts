@@ -59,6 +59,13 @@ async function main() {
   }
   assert.equal(LANG_CODES.length, 6, "expected 6 languages");
 
+  // Unemployment allowance: nothing owed inside the 15-day window; the two-tier
+  // rate (1/4 then 1/2) kicks in past 30 eligible days.
+  const { unemploymentAllowance } = await import("../lib/entitlements");
+  assert.deepEqual(unemploymentAllowance(10, 237), { eligibleDays: 0, eligible: false, amount: 0 });
+  assert.equal(unemploymentAllowance(24, 237).amount, 533); // 9 days × 237 × 0.25
+  assert.equal(unemploymentAllowance(50, 237).amount, 2370); // 30×237×.25 + 5×237×.5
+
   // OTP: request needs a phone; verify rejects a wrong/unknown code.
   assert.equal((await otpPost(req({}))).status, 400);
   assert.equal((await otpPost(req({ phone: "999" }))).status, 200);

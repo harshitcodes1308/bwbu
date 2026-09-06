@@ -37,7 +37,7 @@ export default function WageStatusPage() {
   return (
     <div className="app-page">
       <div className="page-width">
-        <PageTitle title={t.wageDetails} subtitle={t.ladderSub} onBack={() => router.push("/home")} />
+        <PageTitle title={t.wageDetails} subtitle={t.ladderSub} onBack={() => router.push("/home")} readAloud={`${profile.status[language]}. ${profile.detail[language]}`} />
 
         {isNew ? (
           <section className="empty-state-card new-worker-card">

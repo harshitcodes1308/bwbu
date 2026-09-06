@@ -43,7 +43,7 @@ export default function GrievancePage() {
 
   return (
     <div className="app-page"><div className="page-width narrow-page">
-      <PageTitle title={t.grievanceTitle} subtitle={t.grievanceLead} onBack={() => router.push("/home")} />
+      <PageTitle title={t.grievanceTitle} subtitle={t.grievanceLead} onBack={() => router.push("/home")} readAloud={`${t.grievanceTitle}. ${t.grievanceLead}`} />
 
       <div className="grievance-options">
         {options.map(([key, icon, label]) => (
@@ -65,6 +65,19 @@ export default function GrievancePage() {
           </button>
         </section>
       )}
+
+      {/* Can't write, or would rather talk? Reach a human directly. Same helpline
+          number the tracker and demand screens dial. */}
+      <div className="grievance-help">
+        <div>
+          <strong>{t.helpTitle}</strong>
+          <p>{t.helpBody}</p>
+        </div>
+        <a className="contact-tel" href="tel:18003456789">
+          <span className="material-symbols-outlined" aria-hidden="true">call</span>
+          <span>{t.tollFree}: {t.lpHelplineNumber}</span>
+        </a>
+      </div>
     </div></div>
   );
 }

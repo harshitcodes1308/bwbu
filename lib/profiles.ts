@@ -27,6 +27,9 @@ export type Profile = {
   reason: string;
   step: number;
   tone: string;
+  demandedOn: string; // date a valid work demand was filed; "" = no open demand
+  grsPhone: string; // Gram Rozgar Sahayak contact (synthetic)
+  distanceKm: number; // worksite distance from the village (synthetic)
   name: Record<Lang, string>;
   village: Record<Lang, string>;
   workName: Record<Lang, string>;
@@ -38,10 +41,10 @@ export type Profile = {
 // Non-localized fields. Localized strings live in lib/i18n/profiles.<lang>.json.
 // accountMasked / ifsc are synthetic: the demo never touches a real account.
 const base = [
-  { id: "delayed", initials: "सी", jobCard: "RJ-02-002-2048", phone: "9876543210", accountMasked: "******3902", ifsc: "BARB0RMGBRJ", days: 12, wage: 2568, wagePaid: 0, musterRollClosed: "2026-08-18", currentStage: "payment_processing", reason: "verification_pending", step: 3, tone: "delayed" },
-  { id: "paid", initials: "र", jobCard: "UP-41-000-614", phone: "9876500614", accountMasked: "******4471", ifsc: "BARB0UPMAHA", days: 17, wage: 3910, wagePaid: 3910, musterRollClosed: "2026-08-05", currentStage: "payment_completed", reason: "paid", step: 4, tone: "paid" },
-  { id: "grievance", initials: "म", jobCard: "UP-41-000-327", phone: "9876500327", accountMasked: "******8163", ifsc: "BARB0UPMAHA", days: 8, wage: 1840, wagePaid: 0, musterRollClosed: "2026-08-12", currentStage: "grievance_review", reason: "attendance_dispute", step: 2, tone: "grievance" },
-  { id: "new", initials: "आ", jobCard: "UP-41-000-845", phone: "9876500845", accountMasked: "******2290", ifsc: "BARB0UPMAHA", days: 0, wage: 0, wagePaid: 0, musterRollClosed: "", currentStage: "application_received", reason: "not_started", step: 0, tone: "new" },
+  { id: "delayed", initials: "सी", jobCard: "RJ-02-002-2048", phone: "9876543210", accountMasked: "******3902", ifsc: "BARB0RMGBRJ", days: 12, wage: 2568, wagePaid: 0, musterRollClosed: "2026-08-18", currentStage: "payment_processing", reason: "verification_pending", step: 3, tone: "delayed", demandedOn: "", grsPhone: "9450012048", distanceKm: 2.4 },
+  { id: "paid", initials: "र", jobCard: "UP-41-000-614", phone: "9876500614", accountMasked: "******4471", ifsc: "BARB0UPMAHA", days: 17, wage: 3910, wagePaid: 3910, musterRollClosed: "2026-08-05", currentStage: "payment_completed", reason: "paid", step: 4, tone: "paid", demandedOn: "", grsPhone: "9450010614", distanceKm: 1.6 },
+  { id: "grievance", initials: "म", jobCard: "UP-41-000-327", phone: "9876500327", accountMasked: "******8163", ifsc: "BARB0UPMAHA", days: 8, wage: 1840, wagePaid: 0, musterRollClosed: "2026-08-12", currentStage: "grievance_review", reason: "attendance_dispute", step: 2, tone: "grievance", demandedOn: "", grsPhone: "9450010327", distanceKm: 3.1 },
+  { id: "new", initials: "आ", jobCard: "UP-41-000-845", phone: "9876500845", accountMasked: "******2290", ifsc: "BARB0UPMAHA", days: 0, wage: 0, wagePaid: 0, musterRollClosed: "", currentStage: "application_received", reason: "not_started", step: 0, tone: "new", demandedOn: "2026-08-13", grsPhone: "9450010845", distanceKm: 0 },
 ];
 
 function localized(id: string, field: keyof LocaleRow): Record<Lang, string> {

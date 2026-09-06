@@ -11,9 +11,20 @@ export default function GrievancePreviewPage() {
   const router = useRouter();
   const [complaint, setComplaint] = useState(draft?.complaint ?? "");
 
-  // Deep-linked here without a draft → send the worker back to build one.
+  // The draft may arrive a tick late — the context hydrates it from localStorage
+  // on mount (survives a refresh / dropped connection). Fill the editable field
+  // once it lands.
   useEffect(() => {
-    if (!draft) router.replace("/grievance");
+    if (draft) setComplaint((c) => c || draft.complaint || "");
+  }, [draft]);
+
+  // Deep-linked here with no draft in memory AND none saved → back to build one.
+  // (Don't redirect while a saved draft is still hydrating into context.)
+  useEffect(() => {
+    if (draft) return;
+    let saved: string | null = null;
+    try { saved = localStorage.getItem("mr_draft"); } catch {}
+    if (!saved) router.replace("/grievance");
   }, [draft, router]);
 
   if (!draft) return null;
