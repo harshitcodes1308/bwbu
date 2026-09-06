@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "@/lib/app-context";
 import { fill } from "@/lib/copy";
 import { LANGS } from "@/lib/languages";
 import { speak } from "@/lib/speech";
 import { BrandHeader } from "@/components/BrandHeader";
-import { Avatar } from "@/components/Avatar";
 
 // The landing page shows a worked example, not the signed-in worker's ledger. These
 // figures live here rather than in the locale files so it stays obvious that they are
@@ -41,11 +40,14 @@ function Sym({ name, className = "" }: { name: string; className?: string }) {
 }
 
 export default function LandingPage() {
-  const { t, language, profile } = useApp();
+  const { t, language } = useApp();
   const router = useRouter();
   const [stateCode, setStateCode] = useState("UP");
   const [cardId, setCardId] = useState(SAMPLE.cardId);
-  const [showLedger, setShowLedger] = useState(false);
+  // The sample passbook is on the page from the start, the way the design shows it.
+  // The finder button therefore moves focus to it instead of revealing it — the
+  // browser brings a focused region into view on its own.
+  const ledgerRef = useRef<HTMLDivElement>(null);
 
   const start = () => router.push("/login");
   const langLabel = LANGS.find((l) => l.code === language)?.label ?? "";
@@ -73,7 +75,7 @@ export default function LandingPage() {
               <h1>{t.landingPromise}</h1>
               <p className="lp-lead">{t.lpHeroLead}</p>
               <div className="lp-hero-actions">
-                <button type="button" className="primary-button lp-primary" onClick={start}>
+                <button type="button" className="lp-primary" onClick={start}>
                   {t.landingCta}<Sym name="arrow_forward" />
                 </button>
                 <a className="lp-ghost-link" href="#karan-section"><Sym name="info" />{t.landingWhy}</a>
@@ -88,17 +90,21 @@ export default function LandingPage() {
             </div>
 
             <figure className="lp-hero-visual">
-              <span className="lp-hero-sun" aria-hidden="true" />
-              <img className="lp-hero-photo" src="/images/hero-worker.jpg" alt={t.landingHeroAlt} width={880} height={680} />
-              <figcaption className="lp-hero-card">
-                <span className="lp-hero-card-icon"><Sym name="payments" /></span>
-                <span className="lp-hero-card-text">
-                  <small>{t.lpLastWageCredited}</small>
-                  <strong>₹{inr(SAMPLE.lastWage)}</strong>
-                  <em>{t.lpTransferredToAccount}</em>
-                </span>
-                <span className="lp-pill green"><Sym name="verified" />{t.verified}</span>
-              </figcaption>
+              <div className="lp-hero-frame">
+                <span className="lp-hero-backdrop" aria-hidden="true" />
+                <span className="lp-hero-sun" aria-hidden="true" />
+                <img className="lp-hero-photo" src="/images/hero-worker.jpg" alt={t.landingHeroAlt} width={880} height={680} />
+                <figcaption className="lp-hero-card">
+                  <span className="lp-hero-card-who">
+                    <span className="lp-hero-card-icon"><Sym name="payments" /></span>
+                    <span className="lp-hero-card-text">
+                      <small>{t.lpLastWageCredited}</small>
+                      <strong>₹{inr(SAMPLE.lastWage)} ({t.lpTransferredToAccount})</strong>
+                    </span>
+                  </span>
+                  <span className="lp-pill green">{t.verified}</span>
+                </figcaption>
+              </div>
             </figure>
           </div>
         </section>
@@ -107,21 +113,21 @@ export default function LandingPage() {
             <article className="lp-stat">
               <span className="lp-stat-ic amber"><Sym name="groups" /></span>
               <div>
-                <h3>{t.lpStat1Title}</h3>
+                <h2>{t.lpStat1Title}</h2>
                 <p>{t.statWorkers}</p>
               </div>
             </article>
             <article className="lp-stat">
               <span className="lp-stat-ic green"><Sym name="verified" /></span>
               <div>
-                <h3>{t.lpStat2Title}</h3>
+                <h2>{t.lpStat2Title}</h2>
                 <p>{t.statGuarantee}</p>
               </div>
             </article>
             <article className="lp-stat">
               <span className="lp-stat-ic red"><Sym name="account_balance" /></span>
               <div>
-                <h3>{t.lpStat3Title}</h3>
+                <h2>{t.lpStat3Title}</h2>
                 <p>{t.statDirect}</p>
               </div>
             </article>
@@ -131,11 +137,13 @@ export default function LandingPage() {
         <section className="lp-quick">
           <div className="lp-container">
             <div className="lp-quick-card">
-              <p className="lp-eyebrow">{t.lpQuickEyebrow}</p>
-              <h2>{t.lpQuickTitle}</h2>
-              <p className="lp-lead">{t.lpQuickLead}</p>
+              <div className="lp-quick-head">
+                <p className="lp-eyebrow">{t.lpQuickEyebrow}</p>
+                <h2>{t.lpQuickTitle}</h2>
+                <p className="lp-lead">{t.lpQuickLead}</p>
+              </div>
 
-              <form className="lp-quick-form" onSubmit={(e) => { e.preventDefault(); setShowLedger(true); }}>
+              <form className="lp-quick-form" onSubmit={(e) => { e.preventDefault(); ledgerRef.current?.focus(); }}>
                 <label className="lp-field lp-field-state">
                   <span className="lp-field-label">{t.lpStateLabel}</span>
                   <span className="lp-select">
@@ -148,71 +156,68 @@ export default function LandingPage() {
                 <label className="lp-field lp-field-id">
                   <span className="lp-field-label">{t.lpIdLabel}</span>
                   <span className="lp-input">
-                    <Sym name="badge" />
                     <input value={cardId} onChange={(e) => setCardId(e.target.value)} placeholder={t.lpIdPlaceholder} />
+                    <Sym name="badge" />
                   </span>
                 </label>
-                <button type="submit" className="primary-button lp-quick-submit">
-                  {t.lpSeeButton}<Sym name="search" />
+                <button type="submit" className="lp-quick-submit">
+                  <Sym name="search" />{t.lpSeeButton}
                 </button>
               </form>
-              {showLedger && (
-                <div className="lp-ledger" role="region" aria-label={t.lpSampleBadge}>
-                  <div className="lp-ledger-head">
-                    <span className="lp-ledger-who">
-                      <span className="lp-ledger-avatar"><Avatar profileId={profile.id} size={44} initials={profile.initials} /></span>
-                      <span>
-                        <strong>{t.lpLedgerName}</strong>
-                        <small>{t.lpPanchayatLine}</small>
-                      </span>
-                    </span>
-                    <span className="lp-ledger-tags">
+
+              <div className="lp-ledger" role="region" aria-label={t.lpSampleBadge} ref={ledgerRef} tabIndex={-1}>
+                <div className="lp-ledger-head">
+                  <div className="lp-ledger-who">
+                    <div className="lp-ledger-name">
+                      <strong>{t.lpLedgerName}</strong>
                       <span className="lp-pill green">{t.activeCardHolder}</span>
                       <span className="lp-pill amber">{t.lpSampleBadge}</span>
-                    </span>
+                    </div>
+                    <p>{t.lpPanchayatLine}</p>
                   </div>
-
                   <button type="button" className="lp-listen" onClick={() => speak(ledgerSpoken, language)}>
                     <Sym name="volume_up" />{t.listenAloudTitle} ({langLabel})
                   </button>
-
-                  <div className="lp-quota">
-                    <div className="lp-quota-top">
-                      <span>{t.lpDaysOf100}</span>
-                      <strong>{fill(t.lpDaysDoneCount, SAMPLE.daysDone)}</strong>
-                    </div>
-                    <div className="lp-quota-bar">
-                      <span className="paid" style={{ width: `${SAMPLE.paidDays}%` }} />
-                      <span className="processing" style={{ width: `${SAMPLE.processingDays}%` }} />
-                    </div>
-                    <ul className="lp-quota-legend">
-                      <li><span className="lp-dot green" />{fill(fill(t.lpLegendPaid, SAMPLE.paidDays), inr(SAMPLE.paidAmount))}</li>
-                      <li><span className="lp-dot amber" />{fill(fill(t.lpLegendProcessing, SAMPLE.processingDays), inr(SAMPLE.processingAmount))}</li>
-                      <li><span className="lp-dot open" />{fill(t.lpLegendRemaining, SAMPLE.remainingDays)}</li>
-                    </ul>
-                  </div>
-
-                  <div className="lp-ledger-tiles">
-                    <article>
-                      <small>{t.lpRecentWork}</small>
-                      <strong>{t.lpRecentWorkValue}</strong>
-                      <span>{fill(t.lpMusterNo, SAMPLE.musterRoll)}</span>
-                    </article>
-                    <article>
-                      <small>{t.lpWageStatusLabel}</small>
-                      <strong>{t.lpCreditedDirect}</strong>
-                      <span>{t.lpBankLine}</span>
-                    </article>
-                    <article>
-                      <small>{t.lpDelayQuestion}</small>
-                      <strong>{t.lpNoBlocker}</strong>
-                      <button type="button" className="lp-tile-link" onClick={() => router.push("/grievance")}>
-                        {t.createComplaint}<Sym name="open_in_new" />
-                      </button>
-                    </article>
-                  </div>
                 </div>
-              )}
+                <div className="lp-quota">
+                  <div className="lp-quota-top">
+                    <span>{t.lpDaysOf100}</span>
+                    <strong>{fill(t.lpDaysDoneCount, SAMPLE.daysDone)}</strong>
+                  </div>
+                  {/* Three segments, as in the design: paid, in process, and the
+                      untouched remainder of the 100-day entitlement. */}
+                  <div className="lp-quota-bar">
+                    <span className="paid" style={{ width: `${SAMPLE.paidDays}%` }} title={fill(fill(t.lpLegendPaid, SAMPLE.paidDays), inr(SAMPLE.paidAmount))} />
+                    <span className="processing" style={{ width: `${SAMPLE.processingDays}%` }} title={fill(fill(t.lpLegendProcessing, SAMPLE.processingDays), inr(SAMPLE.processingAmount))} />
+                    <span className="remaining" style={{ width: `${SAMPLE.remainingDays}%` }} title={fill(t.lpLegendRemaining, SAMPLE.remainingDays)} />
+                  </div>
+                  <ul className="lp-quota-legend">
+                    <li><span className="lp-dot green" />{fill(fill(t.lpLegendPaid, SAMPLE.paidDays), inr(SAMPLE.paidAmount))}</li>
+                    <li><span className="lp-dot amber" />{fill(fill(t.lpLegendProcessing, SAMPLE.processingDays), inr(SAMPLE.processingAmount))}</li>
+                    <li><span className="lp-dot open" />{fill(t.lpLegendRemaining, SAMPLE.remainingDays)}</li>
+                  </ul>
+                </div>
+
+                <div className="lp-ledger-tiles">
+                  <article>
+                    <small>{t.lpRecentWork}</small>
+                    <strong>{t.lpRecentWorkValue}</strong>
+                    <span>{fill(t.lpMusterNo, SAMPLE.musterRoll)}</span>
+                  </article>
+                  <article>
+                    <small>{t.lpWageStatusLabel}</small>
+                    <strong>{t.lpCreditedDirect}</strong>
+                    <span>{t.lpBankLine}</span>
+                  </article>
+                  <article>
+                    <small>{t.lpDelayQuestion}</small>
+                    <strong>{t.lpNoBlocker}</strong>
+                    <button type="button" className="lp-tile-link" onClick={() => router.push("/grievance")}>
+                      {t.createComplaint}<Sym name="open_in_new" />
+                    </button>
+                  </article>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -226,16 +231,16 @@ export default function LandingPage() {
             <div className="lp-compare-grid">
               <article className="lp-compare-col old">
                 <header>
-                  <span className="lp-compare-ic red"><Sym name="error_outline" /></span>
-                  <span>
+                  <div>
                     <p className="lp-eyebrow">{t.lpOldEyebrow}</p>
                     <h3>{t.lpOldTitle}</h3>
-                  </span>
+                  </div>
+                  <span className="lp-compare-ic red"><Sym name="error_outline" /></span>
                 </header>
                 <ul>
-                  <li><Sym name="close" /><span><strong>{t.lpOld1Title}</strong><p>{t.lpOld1Body}</p></span></li>
-                  <li><Sym name="close" /><span><strong>{t.lpOld2Title}</strong><p>{t.lpOld2Body}</p></span></li>
-                  <li><Sym name="close" /><span><strong>{t.lpOld3Title}</strong><p>{t.lpOld3Body}</p></span></li>
+                  <li><Sym name="close" /><div><h4>{t.lpOld1Title}</h4><p>{t.lpOld1Body}</p></div></li>
+                  <li><Sym name="close" /><div><h4>{t.lpOld2Title}</h4><p>{t.lpOld2Body}</p></div></li>
+                  <li><Sym name="close" /><div><h4>{t.lpOld3Title}</h4><p>{t.lpOld3Body}</p></div></li>
                 </ul>
                 <footer>{t.lpOldFooter}</footer>
               </article>
@@ -243,16 +248,16 @@ export default function LandingPage() {
               <article className="lp-compare-col new">
                 <span className="lp-compare-blob" aria-hidden="true" />
                 <header>
-                  <span className="lp-compare-ic green"><Sym name="check_circle" className="filled" /></span>
-                  <span>
+                  <div>
                     <p className="lp-eyebrow">{t.lpNewEyebrow}</p>
                     <h3>{t.lpNewTitle}</h3>
-                  </span>
+                  </div>
+                  <span className="lp-compare-ic green"><Sym name="check_circle" className="filled" /></span>
                 </header>
                 <ul>
-                  <li><Sym name="check" /><span><strong>{t.lpNew1Title}</strong><p>{t.lpNew1Body}</p></span></li>
-                  <li><Sym name="check" /><span><strong>{t.lpNew2Title}</strong><p>{t.lpNew2Body}</p></span></li>
-                  <li><Sym name="check" /><span><strong>{t.lpNew3Title}</strong><p>{t.lpNew3Body}</p></span></li>
+                  <li><Sym name="check" /><div><h4>{t.lpNew1Title}</h4><p>{t.lpNew1Body}</p></div></li>
+                  <li><Sym name="check" /><div><h4>{t.lpNew2Title}</h4><p>{t.lpNew2Body}</p></div></li>
+                  <li><Sym name="check" /><div><h4>{t.lpNew3Title}</h4><p>{t.lpNew3Body}</p></div></li>
                 </ul>
                 <footer className="green"><Sym name="verified_user" />{t.lpNewFooter}</footer>
               </article>
@@ -272,19 +277,19 @@ export default function LandingPage() {
                 <span className="lp-step-num">{t.lpNum1}</span>
                 <h3>{t.lpStep1Title}</h3>
                 <p>{t.lpStep1Body}</p>
-                <footer><Sym name="pin" className="brown" />{t.lpStep1Foot}</footer>
+                <footer className="brown"><span>{t.lpStep1Foot}</span><Sym name="pin" /></footer>
               </li>
               <li className="lp-step">
                 <span className="lp-step-num">{t.lpNum2}</span>
                 <h3>{t.lpStep2Title}</h3>
                 <p>{t.lpStep2Body}</p>
-                <footer><Sym name="account_balance_wallet" className="green" />{t.lpStep2Foot}</footer>
+                <footer className="green"><span>{t.lpStep2Foot}</span><Sym name="account_balance_wallet" /></footer>
               </li>
               <li className="lp-step">
                 <span className="lp-step-num">{t.lpNum3}</span>
                 <h3>{t.lpStep3Title}</h3>
                 <p>{t.lpStep3Body}</p>
-                <footer><Sym name="support_agent" className="red" />{t.lpStep3Foot}</footer>
+                <footer className="red"><span>{t.lpStep3Foot}</span><Sym name="support_agent" /></footer>
               </li>
             </ol>
           </div>
@@ -293,24 +298,32 @@ export default function LandingPage() {
           <div className="lp-container">
             <figure className="lp-quote">
               <span className="lp-quote-mark"><Sym name="format_quote" /></span>
-              <blockquote>{t.lpQuote}</blockquote>
-              <figcaption>{t.lpQuoteName} • {t.lpQuoteRole}</figcaption>
+              <div>
+                <blockquote>{t.lpQuote}</blockquote>
+                <figcaption>
+                  <strong>{t.lpQuoteName}</strong>
+                  <span aria-hidden="true">•</span>
+                  <span>{t.lpQuoteRole}</span>
+                </figcaption>
+              </div>
             </figure>
           </div>
         </section>
 
         <section className="lp-cta">
-          <div className="lp-container lp-cta-inner">
-            <p className="lp-cta-pill"><Sym name="shield" />{t.lpCtaPill}</p>
-            <h2>{t.lpCtaTitle}</h2>
-            <p className="lp-cta-lead">{t.lpCtaLead}</p>
-            <div className="lp-cta-actions">
-              <button type="button" className="lp-cta-primary" onClick={start}>
-                <Sym name="play_arrow" />{t.lpCtaPrimary}
-              </button>
-              {/* Not a tel: link on purpose — the number is part of the mock record, and
-                  dialling a made-up helpline would be worse than showing it flat. */}
-              <span className="lp-cta-secondary"><Sym name="call" />{t.tollFree}: {t.lpHelplineNumber}</span>
+          <div className="lp-container">
+            <div className="lp-cta-inner">
+              <p className="lp-cta-pill"><Sym name="shield" />{t.lpCtaPill}</p>
+              <h2>{t.lpCtaTitle}</h2>
+              <p className="lp-cta-lead">{t.lpCtaLead}</p>
+              <div className="lp-cta-actions">
+                <button type="button" className="lp-cta-primary" onClick={start}>
+                  <Sym name="play_arrow" />{t.lpCtaPrimary}
+                </button>
+                {/* Not a tel: link on purpose — the number is part of the mock record, and
+                    dialling a made-up helpline would be worse than showing it flat. */}
+                <span className="lp-cta-secondary"><Sym name="call" />{t.tollFree}: {t.lpHelplineNumber}</span>
+              </div>
             </div>
           </div>
         </section>
@@ -326,10 +339,12 @@ export default function LandingPage() {
             <strong>{t.lpFooterBrand}</strong>
             <p>{t.lpFooterSub}</p>
           </div>
+          {/* Stitch pairs a green and an amber glyph here. Its labels claim a verified
+              government service, which this prototype is not, so the honest lines from
+              our copy deck go in the same two slots. */}
           <ul className="lp-footer-tags">
-            <li><Sym name="science" />{t.trustPrototype}</li>
-            <li><Sym name="info" />{t.trustMock}</li>
-            <li><Sym name="gpp_maybe" />{t.trustOfficial}</li>
+            <li><Sym name="science" className="green" />{t.trustPrototype}</li>
+            <li><Sym name="support_agent" className="amber" />{t.tollFree}: {t.lpHelplineNumber}</li>
           </ul>
         </div>
       </footer>

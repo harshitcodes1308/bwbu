@@ -19,10 +19,18 @@
   /* Landing-page surface ramp from the Stitch spec. Four warm greys that step away
      from --paper, plus one tint per accent for the small icon tiles. */
   --wheat-surface: #FDFBF7;
+  --surface-lowest: #FFFFFF;
   --surface: #FFF8F5;
   --surface-low: #FFF1EA;
+  --surface-container: #F9EBE5;
   --surface-high: #F3E5DF;
   --surface-highest: #EDE0D9;
+  /* Stitch's on-* ramp. --primary is the deep brown its headings use, one step
+     darker than --soil-brown, which stays the fill for chips and buttons. */
+  --primary: #502C12;
+  --on-primary-container: #E9B08C;
+  --on-surface: #211A16;
+  --on-surface-variant: #51443D;
   --leaf-tint: #EDF5EC;
   --amber-tint: #FDF3E7;
   --terracotta-tint: #FAEDE9;
@@ -84,7 +92,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
    section backgrounds run edge to edge while the text stays aligned. */
 .lp-page { min-height: 100dvh; overflow-x: clip; color: var(--ink); background: var(--paper); }
 .lp-page :focus-visible { border-radius: 4px; outline: 3px solid var(--terracotta-red); outline-offset: 3px; }
-.lp-container { width: min(100%, 1280px); margin-inline: auto; padding-inline: clamp(20px, 4vw, 40px); }
+/* Stitch's max-w-7xl measure with its stepped page margins
+   (px-margin-desktop 2rem → tablet 1.5rem → mobile 1rem). */
+.lp-container { width: min(100%, 1280px); margin-inline: auto; padding-inline: 32px; }
 
 .lp-header-bar { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid var(--wheat-border); background: rgba(255, 253, 247, .92); backdrop-filter: blur(10px); }
 .lp-header-bar .brand-header { border-bottom: 0; }
@@ -92,242 +102,287 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .material-symbols-outlined.filled { font-variation-settings: "FILL" 1; }
 
 /* --- Hero ---------------------------------------------------------------- */
-.lp-hero { padding-block: clamp(36px, 6vw, 72px) clamp(40px, 6vw, 80px); background:
-    radial-gradient(120% 90% at 88% 6%, var(--amber-tint) 0%, transparent 58%),
-    linear-gradient(180deg, var(--wheat-surface) 0%, var(--paper) 72%); }
-.lp-hero-grid { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
-.lp-hero-copy { min-width: 0; max-width: 620px; }
-.lp-act-pill { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 20px; padding: 7px 16px 7px 12px; border: 1px solid var(--wheat-border); border-radius: 999px; background: var(--wheat-tint); color: var(--soil-brown); font-size: 13px; font-weight: 800; line-height: 1.3; }
-.lp-act-pill .material-symbols-outlined { font-size: 18px; color: var(--sun-amber); }
-.lp-hero-copy h1 { margin: 0; color: var(--soil-brown); font-size: clamp(40px, 5.4vw, 68px); font-weight: 700; line-height: 1.04; letter-spacing: 0; text-wrap: balance; }
-.lp-lead { margin: 18px 0 0; max-width: 52ch; color: var(--ink-muted); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.62; text-wrap: pretty; }
-.lp-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 30px; }
-.lp-primary { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 226px; min-height: 60px; padding-inline: 24px; font-size: 17px; box-shadow: 0 12px 26px rgba(107, 66, 38, .18); }
-.lp-primary .material-symbols-outlined { font-size: 20px; }
-.lp-ghost-link { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; color: var(--soil-brown); font-weight: 800; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; }
-.lp-ghost-link .material-symbols-outlined { font-size: 19px; }
-.lp-trust-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--line); }
+/* Type below follows the Stitch scale verbatim: display-lg 40/52/-0.01em/600
+   (display-lg-mobile 30/40), headline-lg 22/30, headline-sm 18/26, title-md
+   17/24, body-lg 16/24, body-md 14/22, label-lg 15/20, label-md 13/18/500,
+   label-sm 11/16/0.04em/600. Icon sizes are its Tailwind text-* steps:
+   text-sm 14, text-base 16, text-lg 18, text-xl 20, text-2xl 24, text-4xl 36. */
+.lp-hero { padding-block: 64px; background: var(--surface-low); }
+.lp-hero-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; }
+.lp-hero-copy { position: relative; z-index: 10; min-width: 0; }
+.lp-act-pill { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px; padding: 4px 12px; border-radius: 999px; background: var(--wheat-tint); color: var(--primary); font-size: 13px; font-weight: 500; line-height: 18px; }
+.lp-act-pill .material-symbols-outlined { font-size: 16px; color: var(--soil-brown); font-variation-settings: "FILL" 1; }
+.lp-hero-copy h1 { margin: 0 0 24px; color: var(--primary); font-size: 40px; font-weight: 600; line-height: 52px; letter-spacing: -0.025em; text-wrap: balance; }
+.lp-lead { margin: 0; color: var(--on-surface-variant); font-size: 16px; line-height: 24px; text-wrap: pretty; }
+.lp-hero-copy .lp-lead { max-width: 42rem; margin-bottom: 32px; line-height: 1.625; }
+.lp-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+/* The landing buttons carry their own fill rather than the app's .primary-button,
+   whose 56px height and 800 weight would override the Stitch label-lg spec. */
+.lp-primary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 52px; padding: 16px 32px; border: 0; border-radius: var(--radius-btn); background: var(--soil-brown); color: #fff; font: inherit; font-size: 15px; font-weight: 600; line-height: 20px; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(43, 36, 32, .1), 0 2px 4px -2px rgba(43, 36, 32, .1); transition: transform 140ms var(--ease-out), background-color 140ms ease; }
+.lp-primary .material-symbols-outlined { font-size: 18px; }
+.lp-ghost-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 16px 24px; border-radius: var(--radius-btn); color: var(--soil-brown); font-size: 15px; font-weight: 600; line-height: 20px; text-decoration: none; transition: background .18s var(--ease-out); }
+.lp-ghost-link:hover { background: rgba(244, 227, 178, .6); }
+.lp-ghost-link .material-symbols-outlined { font-size: 18px; }
+.lp-trust-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 48px; padding-top: 24px; }
 .lp-trust-stack { display: inline-flex; align-items: center; }
-.lp-trust-dot { display: grid; place-items: center; min-width: 62px; height: 38px; padding-inline: 10px; border: 2px solid var(--paper); border-radius: 999px; font-size: 12px; font-weight: 800; line-height: 1; white-space: nowrap; }
-.lp-trust-dot.wheat { background: var(--wheat); color: var(--soil-brown); }
-.lp-trust-dot.green { margin-left: -12px; background: var(--leaf-green); color: var(--paper); }
-.lp-trust-caption { max-width: 34ch; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+/* Stitch pins these to w-10 h-10 circles, which the label overflows on every
+   locale; the pill keeps its 40px height and its type and lets the text fit. */
+.lp-trust-dot { display: grid; place-items: center; min-width: 40px; height: 40px; padding-inline: 11px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .04em; line-height: 16px; white-space: nowrap; box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .08); }
+.lp-trust-dot.wheat { background: var(--wheat-tint); color: var(--primary); }
+.lp-trust-dot.green { margin-left: -8px; background: var(--leaf-tint); color: var(--leaf-green); }
+.lp-trust-caption { color: var(--ink-muted); font-size: 13px; font-weight: 500; line-height: 18px; }
 
-.lp-hero-visual { position: relative; margin: 0; min-width: 0; }
-.lp-hero-sun { position: absolute; top: -6%; right: -7%; width: 62%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 50%, var(--wheat) 0%, rgba(244, 227, 178, 0) 70%); pointer-events: none; }
-/* Aspect matches the Stitch illustration's own 880x680 crop, so the artwork is shown
-   whole rather than cover-cropped. height:auto is required because the <img> carries
-   width/height attributes, and those would otherwise pin the box to 680px tall. */
-.lp-hero-photo { position: relative; display: block; width: 100%; height: auto; aspect-ratio: 880 / 680; object-fit: cover; object-position: center; border-radius: 20px; background: var(--wheat); box-shadow: var(--shadow-card); }
-.lp-hero-card { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; width: min(100%, 380px); margin: -46px 0 0 clamp(-8px, -1vw, 0px); padding: 14px 16px; border: 1px solid var(--wheat-border); border-radius: 16px; background: var(--paper); box-shadow: var(--shadow-card); text-align: left; }
-.lp-hero-card-icon { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 12px; background: var(--leaf-tint); color: var(--leaf-green); }
-.lp-hero-card-icon .material-symbols-outlined { font-size: 24px; }
-.lp-hero-card-text { display: grid; gap: 1px; min-width: 0; }
-.lp-hero-card-text small { color: var(--muted); font-size: 12px; line-height: 1.35; }
-.lp-hero-card-text strong { color: var(--soil-brown); font-size: 23px; line-height: 1.2; font-variant-numeric: tabular-nums; }
-.lp-hero-card-text em { color: var(--leaf-green); font-size: 12px; font-style: normal; font-weight: 700; line-height: 1.35; }
-.lp-pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 800; line-height: 1.3; white-space: nowrap; }
-.lp-pill .material-symbols-outlined { font-size: 15px; }
+.lp-hero-visual { position: relative; display: flex; align-items: center; justify-content: center; margin: 0; min-width: 0; }
+/* Stitch stacks four layers in one max-w-md frame: a wheat-to-clay gradient
+   backdrop, a blurred amber sun, the artwork, and the status card overlaid on
+   the bottom edge. The artwork keeps its own 880x680 crop, so height:auto is
+   required — the <img> width/height attributes would otherwise pin it to 680. */
+.lp-hero-frame { position: relative; display: flex; flex-direction: column; justify-content: flex-end; width: 100%; max-width: 28rem; overflow: hidden; border-radius: 12px; background: var(--wheat-surface); box-shadow: 0 20px 25px -5px rgba(43, 36, 32, .12), 0 8px 10px -6px rgba(43, 36, 32, .1); }
+.lp-hero-backdrop { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(232, 145, 45, .2) 0%, var(--surface-high) 50%, var(--surface-container) 100%); }
+.lp-hero-sun { position: absolute; top: 48px; left: 50%; width: 192px; height: 192px; border-radius: 50%; background: rgba(232, 145, 45, .3); filter: blur(40px); transform: translateX(-50%); pointer-events: none; }
+.lp-hero-photo { position: relative; z-index: 10; display: block; width: 100%; height: auto; aspect-ratio: 880 / 680; object-fit: cover; object-position: center; }
+.lp-hero-card { position: absolute; z-index: 20; right: 16px; bottom: 16px; left: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, .95); backdrop-filter: blur(12px); box-shadow: 0 10px 15px -3px rgba(43, 36, 32, .12), 0 4px 6px -4px rgba(43, 36, 32, .1); text-align: left; }
+.lp-hero-card-who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.lp-hero-card-icon { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--leaf-tint); color: var(--leaf-green); }
+.lp-hero-card-icon .material-symbols-outlined { font-size: 24px; font-variation-settings: "FILL" 1; }
+.lp-hero-card-text { display: grid; min-width: 0; }
+.lp-hero-card-text small { color: var(--ink-muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 1.25; }
+.lp-hero-card-text strong { color: var(--on-surface); font-size: 17px; font-weight: 700; line-height: 24px; font-variant-numeric: tabular-nums; }
+.lp-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; white-space: nowrap; }
+.lp-pill .material-symbols-outlined { font-size: 14px; }
 .lp-pill.green { background: var(--leaf-tint); color: var(--leaf-green); }
 .lp-pill.amber { background: var(--amber-tint); color: #9A5B12; }
-.lp-hero-card .lp-pill { margin-left: auto; }
 
 /* --- Stats strip --------------------------------------------------------- */
-.lp-stats { padding-block: clamp(28px, 3.4vw, 44px); border-block: 1px solid var(--wheat-border); background: var(--surface); }
-.lp-stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.2vw, 28px); }
-.lp-stat { display: flex; align-items: flex-start; gap: 14px; min-width: 0; }
-.lp-stat-ic { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; }
-.lp-stat-ic .material-symbols-outlined { font-size: 25px; }
+.lp-stats { padding-block: 32px; background: var(--wheat-surface); box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .05); }
+.lp-stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.lp-stat { display: flex; align-items: flex-start; gap: 16px; min-width: 0; padding: 24px; border-radius: 12px; background: var(--surface-lowest); box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .05); transition: box-shadow .18s var(--ease-out); }
+.lp-stat:hover { box-shadow: 0 4px 6px -1px rgba(43, 36, 32, .1), 0 2px 4px -2px rgba(43, 36, 32, .1); }
+.lp-stat-ic { flex: none; display: grid; place-items: center; padding: 12px; border-radius: var(--radius-btn); }
+.lp-stat-ic .material-symbols-outlined { font-size: 24px; font-variation-settings: "FILL" 1; }
 .lp-stat-ic.amber { background: var(--amber-tint); color: var(--sun-amber); }
 .lp-stat-ic.green { background: var(--leaf-tint); color: var(--leaf-green); }
 .lp-stat-ic.red { background: var(--terracotta-tint); color: var(--terracotta-red); }
-.lp-stat h3 { margin: 0; color: var(--soil-brown); font-size: 25px; line-height: 1.15; font-variant-numeric: tabular-nums; }
-.lp-stat p { margin: 3px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; text-wrap: pretty; }
+.lp-stat h2 { margin: 0 0 4px; color: var(--primary); font-size: 18px; font-weight: 600; line-height: 26px; font-variant-numeric: tabular-nums; }
+.lp-stat p { margin: 0; color: var(--on-surface-variant); font-size: 14px; line-height: 22px; text-wrap: pretty; }
 
 /* --- Quick check card ---------------------------------------------------- */
-.lp-quick { padding-block: clamp(40px, 5vw, 68px); }
-.lp-quick-card { padding: clamp(24px, 3.4vw, 44px); border: 1px solid var(--wheat-border); border-radius: 22px; background: var(--paper); box-shadow: var(--shadow-card); }
-.lp-eyebrow { margin: 0; color: var(--sun-amber); font-size: 12.5px; font-weight: 800; letter-spacing: .1em; line-height: 1.3; text-transform: uppercase; }
-.lp-quick-card h2 { margin: 10px 0 0; color: var(--soil-brown); font-size: clamp(28px, 3.2vw, 40px); line-height: 1.12; letter-spacing: 0; text-wrap: balance; }
-.lp-quick-card .lp-lead { margin-top: 12px; }
+.lp-quick { padding-block: 48px; background: var(--surface-high); }
+.lp-quick-card { padding: 32px; border-radius: 12px; background: var(--surface-lowest); box-shadow: 0 10px 15px -3px rgba(43, 36, 32, .12), 0 4px 6px -4px rgba(43, 36, 32, .1); }
+.lp-quick-head { max-width: 48rem; margin-bottom: 24px; }
+.lp-eyebrow { margin: 0; color: var(--soil-brown); font-size: 11px; font-weight: 700; letter-spacing: .05em; line-height: 16px; text-transform: uppercase; }
+.lp-quick-card h2 { margin: 4px 0 0; color: var(--primary); font-size: 28px; font-weight: 600; line-height: 38px; letter-spacing: 0; text-wrap: balance; }
+.lp-quick-card .lp-lead { margin-top: 8px; color: var(--ink-muted); font-size: 14px; line-height: 22px; }
 
-.lp-quick-form { display: grid; grid-template-columns: minmax(190px, .8fr) minmax(0, 1.4fr) auto; gap: 16px; align-items: end; margin-top: 26px; }
-.lp-field { display: grid; gap: 7px; min-width: 0; }
-.lp-field-label { color: var(--soil-brown); font-size: 13px; font-weight: 800; line-height: 1.3; }
-/* Pinned rather than left to source order so the submit button can span the row
-   at narrow widths without the two fields reflowing into different columns. */
-.lp-field-state { grid-column: 1; }
-.lp-field-id { grid-column: 2; }
-.lp-select, .lp-input { position: relative; display: flex; align-items: center; gap: 10px; min-height: 58px; padding-inline: 14px; border: 1.5px solid var(--outline-variant); border-radius: var(--radius-btn); background: var(--wheat-surface); transition: border-color .18s var(--ease-out), box-shadow .18s var(--ease-out); }
-.lp-select:focus-within, .lp-input:focus-within { border-color: var(--soil-brown); box-shadow: 0 0 0 3px rgba(107, 66, 38, .14); }
-.lp-select > select, .lp-input > input { flex: 1; min-width: 0; height: 54px; border: 0; background: none; color: var(--ink); font: inherit; font-size: 16px; font-weight: 600; }
-.lp-select > select { appearance: none; cursor: pointer; padding-right: 22px; color: var(--soil-brown); }
+/* Stitch lays the finder out on a 12-column grid: 5 for the state, 5 for the id,
+   2 for the submit, which sits flush with the bottom of the two fields. */
+.lp-quick-form { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; align-items: center; }
+.lp-field { display: grid; gap: 4px; min-width: 0; }
+.lp-field-label { color: var(--ink-muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; }
+.lp-field-state { grid-column: span 5; }
+.lp-field-id { grid-column: span 5; }
+.lp-select, .lp-input { position: relative; display: flex; align-items: center; height: 48px; padding-inline: 16px; border: 0; border-radius: var(--radius-btn); background: var(--surface-low); transition: background .18s var(--ease-out), box-shadow .18s var(--ease-out); }
+.lp-select:focus-within, .lp-input:focus-within { background: var(--surface-lowest); box-shadow: 0 0 0 2px var(--outline-variant); }
+.lp-select > select, .lp-input > input { flex: 1; min-width: 0; height: 46px; padding: 0 28px 0 0; border: 0; background: none; color: var(--on-surface); font: inherit; font-size: 14px; font-weight: 400; }
+.lp-select > select { appearance: none; cursor: pointer; }
 .lp-select > select:focus, .lp-input > input:focus { outline: none; }
-.lp-select > .material-symbols-outlined { position: absolute; right: 12px; color: var(--soil-brown); font-size: 22px; pointer-events: none; }
-.lp-input > .material-symbols-outlined { flex: none; color: var(--muted); font-size: 21px; }
+.lp-select > .material-symbols-outlined, .lp-input > .material-symbols-outlined { position: absolute; right: 12px; font-size: 24px; pointer-events: none; }
+.lp-select > .material-symbols-outlined { color: var(--on-surface-variant); }
+.lp-input > .material-symbols-outlined { color: var(--soil-brown); }
 .lp-input > input { font-variant-numeric: tabular-nums; }
-.lp-input > input::placeholder { color: #A2958C; font-weight: 500; }
-.lp-quick-submit { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 58px; padding-inline: 26px; font-size: 16px; }
+.lp-input > input::placeholder { color: #A2958C; }
+.lp-quick-submit { grid-column: span 2; align-self: end; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding-inline: 12px; border: 0; border-radius: var(--radius-btn); background: var(--soil-brown); color: #fff; font: inherit; font-size: 15px; font-weight: 600; line-height: 20px; cursor: pointer; box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .08); transition: transform 140ms var(--ease-out), background-color 140ms ease; }
+.lp-primary:active, .lp-quick-submit:active, .lp-cta-primary:active { transform: scale(.985); }
 .lp-quick-submit .material-symbols-outlined { font-size: 20px; }
 
-/* --- Sample ledger (revealed by the quick check) -------------------------- */
-.lp-ledger { margin-top: 28px; padding: clamp(18px, 2.6vw, 28px); border: 1px solid var(--wheat-border); border-radius: 18px; background: var(--wheat-surface); }
-.lp-ledger-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
-.lp-ledger-who { display: flex; align-items: center; gap: 13px; min-width: 0; }
-.lp-ledger-avatar { flex: none; width: 44px; height: 44px; overflow: hidden; border-radius: 50%; background: var(--wheat); }
-.lp-ledger-who strong { display: block; color: var(--soil-brown); font-size: 18px; line-height: 1.25; }
-.lp-ledger-who small { display: block; margin-top: 2px; color: var(--muted); font-size: 12.5px; line-height: 1.4; }
-.lp-ledger-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.lp-listen { display: inline-flex; align-items: center; gap: 9px; margin-top: 18px; min-height: 46px; padding: 0 18px; border: 1.5px solid var(--wheat-border); border-radius: 999px; background: var(--paper); color: var(--soil-brown); font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; transition: background .18s var(--ease-out); }
-.lp-listen .material-symbols-outlined { font-size: 20px; color: var(--terracotta-red); }
+/* --- Sample passbook strip ------------------------------------------------ */
+.lp-ledger { margin-top: 32px; padding: 24px; border-radius: 12px; background: var(--wheat-surface); box-shadow: 0 4px 6px -1px rgba(43, 36, 32, .1), 0 2px 4px -2px rgba(43, 36, 32, .1); }
+.lp-ledger-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 24px; }
+.lp-ledger-who { display: grid; gap: 4px; min-width: 0; }
+.lp-ledger-name { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.lp-ledger-name strong { color: var(--primary); font-size: 17px; font-weight: 700; line-height: 24px; }
+.lp-ledger-who p { margin: 4px 0 0; color: var(--ink-muted); font-size: 13px; font-weight: 500; line-height: 18px; }
+.lp-listen { flex: none; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border: 0; border-radius: 999px; background: var(--surface-lowest); color: var(--soil-brown); font: inherit; font-size: 13px; font-weight: 500; line-height: 18px; cursor: pointer; box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .08); transition: background .18s var(--ease-out); }
+.lp-listen:hover { background: var(--wheat-tint); }
+.lp-listen .material-symbols-outlined { font-size: 24px; color: var(--sun-amber); font-variation-settings: "FILL" 1; }
 
-.lp-quota { margin-top: 20px; padding: 18px; border: 1px solid var(--wheat-border); border-radius: 14px; background: var(--paper); }
-.lp-quota-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 13px; }
-.lp-quota-top strong { color: var(--soil-brown); font-size: 17px; font-variant-numeric: tabular-nums; }
-.lp-quota-bar { display: flex; height: 14px; margin-top: 11px; overflow: hidden; border-radius: 999px; background: var(--surface-high); }
+.lp-quota { padding-block: 16px; }
+.lp-quota-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 13px; line-height: 18px; }
+.lp-quota-top > span { color: var(--ink); font-weight: 600; }
+.lp-quota-top > strong { color: var(--soil-brown); font-weight: 700; font-variant-numeric: tabular-nums; }
+.lp-quota-bar { display: flex; width: 100%; height: 16px; overflow: hidden; border-radius: 999px; background: var(--surface-highest); }
 .lp-quota-bar > span { display: block; height: 100%; }
 .lp-quota-bar > .paid { background: var(--leaf-green); }
 .lp-quota-bar > .processing { background: var(--sun-amber); }
-.lp-quota-legend { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 13px 0 0; padding: 0; list-style: none; }
-.lp-quota-legend li { display: flex; align-items: center; gap: 8px; color: var(--ink-muted); font-size: 13px; line-height: 1.4; font-variant-numeric: tabular-nums; }
-.lp-dot { flex: none; width: 11px; height: 11px; border-radius: 50%; }
+/* Transparent on purpose: the third segment is the unclaimed part of the 100-day
+   entitlement, so it reads as the bar's own empty track. */
+.lp-quota-bar > .remaining { background: transparent; }
+.lp-quota-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 12px 0 0; padding: 0; list-style: none; color: var(--ink-muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; }
+.lp-quota-legend li { display: flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+.lp-dot { flex: none; width: 12px; height: 12px; border-radius: 50%; }
 .lp-dot.green { background: var(--leaf-green); }
 .lp-dot.amber { background: var(--sun-amber); }
-.lp-dot.open { background: var(--surface-highest); }
+.lp-dot.open { background: var(--outline-variant); }
 
-.lp-ledger-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
-.lp-ledger-tiles > article { display: grid; align-content: start; gap: 4px; min-width: 0; padding: 16px; border: 1px solid var(--wheat-border); border-radius: 14px; background: var(--paper); }
-.lp-ledger-tiles small { color: var(--muted); font-size: 12px; line-height: 1.35; }
-.lp-ledger-tiles strong { color: var(--soil-brown); font-size: 16px; line-height: 1.3; }
-.lp-ledger-tiles article > span { color: var(--ink-muted); font-size: 12.5px; line-height: 1.4; font-variant-numeric: tabular-nums; }
-.lp-tile-link { display: inline-flex; align-items: center; gap: 6px; justify-self: start; margin-top: 3px; padding: 0; border: 0; background: none; color: var(--terracotta-red); font: inherit; font-size: 13px; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
-.lp-tile-link .material-symbols-outlined { font-size: 16px; }
+.lp-ledger-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 16px; padding-top: 16px; }
+.lp-ledger-tiles > article { display: flex; flex-direction: column; justify-content: space-between; min-width: 0; padding: 16px; border-radius: var(--radius-btn); background: var(--surface-lowest); box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .05); }
+.lp-ledger-tiles small { color: var(--ink-muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; }
+.lp-ledger-tiles strong { margin-top: 2px; color: var(--on-surface); font-size: 17px; font-weight: 600; line-height: 24px; }
+.lp-ledger-tiles article:nth-child(2) strong { color: var(--leaf-green); }
+.lp-ledger-tiles article:nth-child(3) strong { color: var(--terracotta-red); }
+.lp-ledger-tiles article > span { margin-top: 4px; color: var(--ink-muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; font-variant-numeric: tabular-nums; }
+.lp-ledger-tiles article:nth-child(1) > span { color: var(--soil-brown); }
+.lp-tile-link { display: inline-flex; align-items: center; gap: 2px; align-self: start; margin-top: 4px; padding: 0; border: 0; background: none; color: var(--soil-brown); font: inherit; font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; cursor: pointer; }
+.lp-tile-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.lp-tile-link .material-symbols-outlined { font-size: 14px; }
 
 /* --- Old way / new way --------------------------------------------------- */
-.lp-compare { padding-block: clamp(44px, 5.6vw, 76px); scroll-margin-top: 92px; background: var(--surface); border-block: 1px solid var(--wheat-border); }
-.lp-section-head { max-width: 66ch; margin-inline: auto; text-align: center; }
-.lp-pill-center { display: inline-block; margin: 0 0 14px; padding: 6px 15px; border: 1px solid var(--wheat-border); border-radius: 999px; background: var(--paper); color: var(--soil-brown); font-size: 12.5px; font-weight: 800; letter-spacing: .06em; line-height: 1.3; text-transform: uppercase; }
-.lp-section-head h2 { margin: 0; color: var(--soil-brown); font-size: clamp(30px, 3.6vw, 46px); line-height: 1.1; letter-spacing: 0; text-wrap: balance; }
-.lp-section-head .lp-lead { margin-inline: auto; margin-top: 14px; }
-.lp-compare-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(18px, 2.4vw, 28px); margin-top: clamp(28px, 3.4vw, 44px); align-items: start; }
-.lp-compare-col { position: relative; display: grid; align-content: start; gap: 20px; min-width: 0; padding: clamp(22px, 2.6vw, 32px); border-radius: 20px; overflow: hidden; }
-.lp-compare-col.old { border: 1px solid var(--wheat-border); background: var(--paper); }
-.lp-compare-col.new { border: 1px solid transparent; background: var(--soil-brown); color: var(--paper); box-shadow: var(--shadow-card); }
-.lp-compare-blob { position: absolute; top: -70px; right: -60px; width: 220px; height: 220px; border-radius: 50%; background: rgba(244, 227, 178, .12); pointer-events: none; }
-.lp-compare-col > header { position: relative; display: flex; align-items: flex-start; gap: 14px; }
-.lp-compare-ic { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 13px; }
-.lp-compare-ic .material-symbols-outlined { font-size: 25px; }
+/* Both columns are light in the Stitch render: the old portal on the clay
+   surface-container-high, the new one on wheat-surface with a leaf-green corner
+   wash. The accent lives in the icon, the eyebrow and the footer, not the fill. */
+.lp-compare { padding-block: 64px; scroll-margin-top: 92px; background: var(--surface); }
+.lp-section-head { max-width: 48rem; margin-inline: auto; margin-bottom: 48px; text-align: center; }
+.lp-pill-center { display: inline-block; margin: 0; padding: 4px 12px; border-radius: 999px; background: var(--wheat-tint); color: var(--primary); font-size: 11px; font-weight: 700; letter-spacing: .05em; line-height: 16px; text-transform: uppercase; }
+.lp-section-head h2 { margin: 12px 0 0; color: var(--primary); font-size: 28px; font-weight: 600; line-height: 38px; letter-spacing: 0; text-wrap: balance; }
+.lp-section-head .lp-lead { margin: 8px auto 0; }
+.lp-compare-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin-top: 0; align-items: stretch; }
+.lp-compare-col { position: relative; display: flex; flex-direction: column; align-items: stretch; min-width: 0; padding: 32px; border-radius: 12px; overflow: hidden; }
+.lp-compare-col.old { background: var(--surface-high); box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .05); }
+.lp-compare-col.new { background: var(--wheat-surface); box-shadow: 0 4px 6px -1px rgba(43, 36, 32, .1), 0 2px 4px -2px rgba(43, 36, 32, .1); }
+.lp-compare-blob { position: absolute; top: 0; right: 0; width: 128px; height: 128px; border-bottom-left-radius: 9999px; background: rgba(76, 122, 63, .05); pointer-events: none; }
+.lp-compare-col > header { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 16px; }
+.lp-compare-ic { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; }
+.lp-compare-ic .material-symbols-outlined { font-size: 24px; }
 .lp-compare-ic.red { background: var(--terracotta-tint); color: var(--terracotta-red); }
-.lp-compare-ic.green { background: var(--wheat); color: var(--leaf-green); }
-.lp-compare-col h3 { margin: 2px 0 0; font-size: 24px; line-height: 1.2; letter-spacing: 0; }
-.lp-compare-col.old h3 { color: var(--soil-brown); }
-.lp-compare-col.new h3 { color: var(--paper); }
-.lp-compare-col.new .lp-eyebrow { color: var(--wheat); }
-.lp-compare-col > ul { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
+.lp-compare-ic.green { background: var(--leaf-tint); color: var(--leaf-green); }
+.lp-compare-col h3 { margin: 4px 0 0; font-size: 22px; font-weight: 600; line-height: 30px; letter-spacing: 0; }
+.lp-compare-col.old h3 { color: var(--on-surface); }
+.lp-compare-col.new h3 { color: var(--primary); }
+.lp-compare-col.old .lp-eyebrow { color: var(--terracotta-red); font-weight: 600; }
+.lp-compare-col.new .lp-eyebrow { color: var(--leaf-green); font-weight: 600; }
+.lp-compare-col > ul { display: grid; gap: 16px; margin: 24px 0 32px; padding: 0; list-style: none; }
 .lp-compare-col > ul > li { display: flex; align-items: flex-start; gap: 12px; }
-.lp-compare-col > ul > li > .material-symbols-outlined { flex: none; display: grid; place-items: center; width: 24px; height: 24px; margin-top: 1px; border-radius: 50%; font-size: 17px; }
-.lp-compare-col.old > ul > li > .material-symbols-outlined { background: var(--terracotta-tint); color: var(--terracotta-red); }
-.lp-compare-col.new > ul > li > .material-symbols-outlined { background: rgba(244, 227, 178, .2); color: var(--wheat); }
-.lp-compare-col li strong { display: block; font-size: 16px; line-height: 1.35; }
-.lp-compare-col.old li strong { color: var(--soil-brown); }
-.lp-compare-col.new li strong { color: var(--paper); }
-.lp-compare-col li p { margin: 4px 0 0; font-size: 14.5px; line-height: 1.55; text-wrap: pretty; }
-.lp-compare-col.old li p { color: var(--muted); }
-.lp-compare-col.new li p { color: rgba(255, 253, 247, .78); }
-.lp-compare-col > footer { display: flex; align-items: center; gap: 8px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.45; }
-.lp-compare-col > footer.green { border-top-color: rgba(244, 227, 178, .22); color: var(--wheat); }
-.lp-compare-col > footer .material-symbols-outlined { font-size: 19px; }
+.lp-compare-col > ul > li > .material-symbols-outlined { flex: none; margin-top: 2px; font-size: 20px; }
+.lp-compare-col.old > ul > li > .material-symbols-outlined { color: var(--terracotta-red); }
+.lp-compare-col.new > ul > li > .material-symbols-outlined { color: var(--leaf-green); font-variation-settings: "FILL" 1; }
+.lp-compare-col h4 { margin: 0; font-size: 17px; font-weight: 600; line-height: 24px; }
+.lp-compare-col.old h4 { color: var(--on-surface); }
+.lp-compare-col.new h4 { color: var(--primary); }
+.lp-compare-col li p { margin: 0; font-size: 14px; line-height: 22px; text-wrap: pretty; }
+.lp-compare-col.old li p { color: var(--ink-muted); }
+.lp-compare-col.new li p { color: var(--on-surface-variant); }
+/* margin-top:auto with the list's 32px bottom margin reproduces Stitch's
+   justify-between: at least 32px of air, and flush to the bottom edge so both
+   result boxes line up when one column runs longer. */
+.lp-compare-col > footer { display: flex; align-items: center; gap: 8px; margin-top: auto; padding: 16px; border: 0; border-radius: var(--radius-btn); font-size: 13px; font-weight: 500; line-height: 18px; }
+.lp-compare-col.old > footer { background: rgba(255, 255, 255, .8); color: var(--ink-muted); }
+.lp-compare-col.new > footer { background: var(--leaf-tint); color: var(--leaf-green); font-weight: 600; }
+.lp-compare-col > footer .material-symbols-outlined { flex: none; font-size: 18px; }
 
 /* --- Three steps --------------------------------------------------------- */
-.lp-how { padding-block: clamp(44px, 5.6vw, 76px); }
-.lp-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2.4vw, 28px); margin: clamp(28px, 3.4vw, 44px) 0 0; padding: 0; list-style: none; counter-reset: none; }
-.lp-step { position: relative; display: grid; align-content: start; gap: 9px; min-width: 0; padding: clamp(22px, 2.6vw, 30px); border: 1px solid var(--wheat-border); border-radius: 20px; background: var(--paper); box-shadow: 0 8px 22px rgba(107, 66, 38, .07); }
-.lp-step-num { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: var(--wheat); color: var(--soil-brown); font-family: "Tiro Devanagari Hindi", Georgia, serif; font-size: 24px; line-height: 1; font-variant-numeric: tabular-nums; }
+.lp-how { padding-block: 64px; background: var(--surface-low); }
+.lp-how .lp-section-head { max-width: 42rem; }
+.lp-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin: 0; padding: 0; list-style: none; }
+.lp-step { position: relative; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: 32px; border: 0; border-radius: 12px; background: var(--surface-lowest); box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .05); transition: transform .2s var(--ease-out); }
+.lp-step-num { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 24px; border-radius: 50%; background: var(--wheat-tint); color: var(--soil-brown); font-family: "Tiro Devanagari Hindi", Georgia, serif; font-size: 28px; font-weight: 700; line-height: 38px; font-variant-numeric: tabular-nums; box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .08); }
 html:lang(en) .lp-step-num { font-family: Fraunces, Georgia, serif; }
-.lp-step h3 { margin: 6px 0 0; color: var(--soil-brown); font-size: 22px; line-height: 1.22; letter-spacing: 0; }
-.lp-step p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.6; text-wrap: pretty; }
-.lp-step > footer { display: flex; align-items: center; gap: 8px; margin-top: 6px; padding-top: 15px; border-top: 1px solid var(--line); color: var(--soil-brown); font-size: 13px; font-weight: 700; line-height: 1.4; }
-.lp-step > footer .material-symbols-outlined { font-size: 19px; }
-.lp-step > footer .material-symbols-outlined.brown { color: var(--soil-brown); }
-.lp-step > footer .material-symbols-outlined.green { color: var(--leaf-green); }
-.lp-step > footer .material-symbols-outlined.red { color: var(--terracotta-red); }
+.lp-step h3 { margin: 0 0 8px; color: var(--primary); font-size: 18px; font-weight: 600; line-height: 26px; letter-spacing: 0; }
+.lp-step p { margin: 0; color: var(--ink-muted); font-size: 14px; line-height: 1.625; text-wrap: pretty; }
+/* Stitch colours the whole footer row, not just the icon, and pushes the icon to
+   the far edge with justify-between — no rule above it. */
+.lp-step > footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-top: 24px; padding-top: 16px; border: 0; font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; }
+.lp-step > footer.brown { color: var(--soil-brown); }
+.lp-step > footer.green { color: var(--leaf-green); }
+.lp-step > footer.red { color: var(--terracotta-red); }
+.lp-step > footer .material-symbols-outlined { flex: none; font-size: 16px; }
 
 /* --- Quote --------------------------------------------------------------- */
-.lp-quote-section { padding-block: clamp(36px, 4.4vw, 60px); border-block: 1px solid var(--wheat-border); background: var(--wheat-tint); }
-.lp-quote { position: relative; max-width: 74ch; margin: 0 auto; padding-top: 34px; text-align: center; }
-.lp-quote-mark { position: absolute; top: -6px; left: 50%; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--paper); color: var(--sun-amber); transform: translateX(-50%); }
-.lp-quote-mark .material-symbols-outlined { font-size: 26px; }
-.lp-quote blockquote { margin: 0; color: var(--soil-brown); font-family: "Tiro Devanagari Hindi", Georgia, serif; font-size: clamp(21px, 2.4vw, 30px); line-height: 1.45; text-wrap: pretty; }
+.lp-quote-section { padding-block: 48px; background: var(--surface); }
+.lp-quote { display: flex; flex-direction: row; align-items: center; gap: 32px; max-width: none; margin: 0; padding: 48px; border-radius: 12px; background: rgba(244, 227, 178, .5); box-shadow: 0 1px 2px 0 rgba(43, 36, 32, .05); text-align: start; }
+.lp-quote-mark { position: static; flex: none; display: grid; place-items: center; width: 96px; height: 96px; border-radius: 50%; background: var(--soil-brown); color: #fff; transform: none; box-shadow: 0 4px 6px -1px rgba(43, 36, 32, .12), 0 2px 4px -2px rgba(43, 36, 32, .1); }
+.lp-quote-mark .material-symbols-outlined { font-size: 36px; }
+.lp-quote > div { min-width: 0; }
+.lp-quote blockquote { margin: 0; color: var(--primary); font-family: "Tiro Devanagari Hindi", Georgia, serif; font-size: 18px; font-weight: 600; font-style: italic; line-height: 1.625; text-wrap: pretty; }
 html:lang(en) .lp-quote blockquote { font-family: Fraunces, Georgia, serif; }
-.lp-quote figcaption { margin-top: 16px; color: var(--muted); font-size: 13.5px; font-weight: 700; line-height: 1.45; }
+.lp-quote figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; color: var(--ink-muted); font-size: 13px; font-weight: 500; line-height: 18px; }
+.lp-quote figcaption strong { color: var(--on-surface); font-size: 17px; font-weight: 700; line-height: 24px; }
 
 /* --- Closing call to action ---------------------------------------------- */
-.lp-cta { padding-block: clamp(44px, 5.6vw, 76px); color: var(--paper); background:
-    radial-gradient(90% 120% at 50% 0%, #7A4E2B 0%, var(--soil-brown) 62%); }
-.lp-cta-inner { display: grid; justify-items: center; text-align: center; }
-.lp-cta-pill { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 7px 16px; border: 1px solid rgba(244, 227, 178, .34); border-radius: 999px; color: var(--wheat); font-size: 12.5px; font-weight: 800; line-height: 1.3; }
-.lp-cta-pill .material-symbols-outlined { font-size: 17px; }
-.lp-cta h2 { max-width: 24ch; margin: 0; color: var(--paper); font-size: clamp(30px, 3.8vw, 50px); line-height: 1.08; letter-spacing: 0; text-wrap: balance; }
-.lp-cta-lead { max-width: 52ch; margin: 16px 0 0; color: rgba(255, 253, 247, .78); font-size: clamp(15px, 1.2vw, 18px); line-height: 1.6; text-wrap: pretty; }
-.lp-cta-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 24px; margin-top: 30px; }
-.lp-cta-primary { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 240px; min-height: 62px; padding-inline: 26px; border: 0; border-radius: var(--radius-btn); background: var(--wheat); color: var(--soil-brown); font: inherit; font-size: 17px; font-weight: 800; cursor: pointer; box-shadow: 0 12px 28px rgba(0, 0, 0, .2); transition: background .18s var(--ease-out); }
-.lp-cta-primary .material-symbols-outlined { font-size: 22px; }
-.lp-cta-secondary { display: inline-flex; align-items: center; gap: 9px; color: var(--wheat); font-size: 15.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+/* Flat soil-brown in the Stitch render, not a radial gradient, and the primary
+   action is the amber one. */
+.lp-cta { padding-block: 64px; color: #fff; background: var(--soil-brown); }
+.lp-cta-inner { display: flex; flex-direction: column; align-items: center; max-width: 48rem; margin-inline: auto; text-align: center; }
+.lp-cta-pill { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 16px; padding: 4px 16px; border: 0; border-radius: 999px; background: var(--wheat-tint); color: var(--primary); font-size: 13px; font-weight: 700; line-height: 18px; }
+.lp-cta-pill .material-symbols-outlined { font-size: 16px; }
+.lp-cta h2 { max-width: none; margin: 0 0 16px; color: #fff; font-size: 40px; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; text-wrap: balance; }
+.lp-cta-lead { max-width: 36rem; margin: 0 0 32px; color: var(--on-primary-container); font-size: 16px; line-height: 1.625; text-wrap: pretty; }
+.lp-cta-actions { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 0; }
+.lp-cta-primary { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-width: 0; min-height: 52px; padding: 16px 32px; border: 0; border-radius: var(--radius-btn); background: var(--sun-amber); color: var(--on-surface); font: inherit; font-size: 15px; font-weight: 700; line-height: 20px; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(43, 36, 32, .25), 0 4px 6px -4px rgba(43, 36, 32, .2); transition: background .18s var(--ease-out); }
+.lp-cta-primary .material-symbols-outlined { font-size: 20px; }
+.lp-cta-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 16px 24px; border-radius: var(--radius-btn); background: rgba(255, 255, 255, .15); color: #fff; font-size: 15px; font-weight: 600; line-height: 20px; font-variant-numeric: tabular-nums; }
 .lp-cta-secondary .material-symbols-outlined { font-size: 20px; }
 
 /* --- Disclaimer + footer -------------------------------------------------- */
-.lp-disclaimer { padding-block: 20px; border-bottom: 1px solid var(--wheat-border); background: var(--surface-low); color: var(--muted); font-size: 12.5px; line-height: 1.55; text-align: center; }
-.lp-footer { padding-block: clamp(24px, 3vw, 38px); background: var(--paper); }
-.lp-footer-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px 32px; align-items: center; }
-.lp-footer-brand strong { display: block; color: var(--soil-brown); font-family: "Tiro Devanagari Hindi", Georgia, serif; font-size: 19px; line-height: 1.25; }
+.lp-disclaimer { padding-block: 16px; border: 0; background: var(--wheat-surface); color: var(--ink-muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; text-align: center; box-shadow: inset 0 2px 4px 0 rgba(43, 36, 32, .05); }
+.lp-footer { padding-block: 32px; background: var(--surface-low); }
+.lp-footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; text-align: start; }
+.lp-footer-brand { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.lp-footer-brand strong { color: var(--primary); font-family: "Tiro Devanagari Hindi", Georgia, serif; font-size: 18px; font-weight: 600; line-height: 26px; }
 html:lang(en) .lp-footer-brand strong { font-family: Fraunces, Georgia, serif; }
-.lp-footer-brand p { margin: 5px 0 0; max-width: 56ch; color: var(--muted); font-size: 13px; line-height: 1.5; }
-.lp-footer-tags { display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 0; padding: 0; list-style: none; }
-.lp-footer-tags li { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--wheat-border); border-radius: 999px; background: var(--wheat-surface); color: var(--muted); font-size: 12px; font-weight: 700; line-height: 1.35; }
-.lp-footer-tags .material-symbols-outlined { font-size: 16px; color: var(--sun-amber); }
+.lp-footer-brand p { margin: 0; max-width: 62ch; color: var(--on-surface-variant); font-size: 14px; line-height: 22px; text-wrap: pretty; }
+/* Inline items, not pills: Stitch pairs a coloured 18px glyph with label-md text. */
+.lp-footer-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 0; padding: 0; list-style: none; color: var(--on-surface-variant); font-size: 13px; font-weight: 500; line-height: 18px; }
+.lp-footer-tags li { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; }
+.lp-footer-tags .material-symbols-outlined { font-size: 18px; }
+.lp-footer-tags .material-symbols-outlined.green { color: var(--leaf-green); }
+.lp-footer-tags .material-symbols-outlined.amber { color: var(--sun-amber); }
 
 /* Landing-only bottom bar. The in-app BottomNav is five items with icons and is
-   scoped to the app shell, so the landing carries its own four-item text bar. */
-.lp-mobile-nav { position: fixed; z-index: 40; right: 0; bottom: 0; left: 0; display: none; border-top: 1px solid var(--wheat-border); background: rgba(255, 253, 247, .97); backdrop-filter: blur(10px); }
-.lp-mobile-nav button { flex: 1; min-width: 0; min-height: 62px; padding: 6px 4px; border: 0; border-top: 3px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 12.5px; font-weight: 700; line-height: 1.3; cursor: pointer; }
-.lp-mobile-nav button.active { border-top-color: var(--soil-brown); color: var(--soil-brown); font-weight: 800; }
+   scoped to the app shell, so the landing carries its own four-item text bar.
+   Stitch marks the active item with a filled primary-container pill. Its row is
+   40px tall; ours keeps the same type but floors each target at 44px. */
+.lp-mobile-nav { position: fixed; z-index: 40; right: 0; bottom: 0; left: 0; display: none; align-items: center; justify-content: space-around; padding: 8px; border: 0; background: rgba(253, 251, 247, .95); backdrop-filter: blur(12px); box-shadow: 0 -2px 12px rgba(43, 36, 32, .08); }
+.lp-mobile-nav button { flex: 1; min-width: 0; min-height: 44px; padding: 4px 8px; border: 0; border-radius: var(--radius-btn); background: none; color: var(--on-surface-variant); font: inherit; font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 16px; cursor: pointer; }
+.lp-mobile-nav button.active { background: var(--soil-brown); color: #fff; }
 
-@media (max-width: 1080px) {
+/* Stitch's md/lg breakpoints, read from the top down: below 1024 the hero and the
+   comparison stack, below 768 every remaining grid collapses and the page margin
+   steps to 16px, below 640 the button rows go full-width. */
+@media (max-width: 1023px) {
+  .lp-container { padding-inline: 24px; }
   .lp-hero-grid { grid-template-columns: 1fr; gap: 32px; }
   .lp-hero-copy { max-width: none; }
-  .lp-hero-visual { width: min(100%, 660px); }
-  .lp-quick-form { grid-template-columns: minmax(170px, .85fr) minmax(0, 1.5fr); }
-  .lp-quick-submit { grid-column: 1 / -1; }
-}
-
-@media (max-width: 900px) {
-  .lp-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .lp-stats-grid > :last-child { grid-column: 1 / -1; }
-  .lp-compare-grid, .lp-steps, .lp-ledger-tiles { grid-template-columns: 1fr; }
-  .lp-compare-col.new .lp-compare-blob { display: none; }
+  .lp-compare-grid { grid-template-columns: 1fr; }
+  .lp-ledger-head { flex-direction: column; align-items: flex-start; }
+  .lp-listen { align-self: flex-start; }
 }
 
 @media (max-width: 767px) {
-  .lp-page { padding-bottom: 62px; }
+  .lp-container { padding-inline: 16px; }
+  .lp-page { padding-bottom: 64px; }
   .lp-mobile-nav { display: flex; }
-  .lp-hero { padding-block: 26px 34px; }
-  .lp-hero-copy h1 { font-size: clamp(32px, 9.4vw, 44px); }
-  .lp-hero-photo { border-radius: 16px; }
-  .lp-hero-card { width: 100%; margin: -34px 0 0; }
-  .lp-trust-row { margin-top: 24px; padding-top: 20px; }
-  .lp-stats-grid { grid-template-columns: 1fr; gap: 16px; }
-  .lp-stats-grid > :last-child { grid-column: auto; }
-  .lp-quick-form { grid-template-columns: 1fr; gap: 14px; }
-  .lp-field-state, .lp-field-id { grid-column: 1; }
-  .lp-primary, .lp-quick-submit, .lp-cta-primary { width: 100%; min-width: 0; }
-  .lp-quota-legend { gap: 8px 14px; }
-  .lp-footer-inner { grid-template-columns: 1fr; }
+  .lp-hero { padding-block: 32px; }
+  .lp-hero-copy h1 { font-size: 30px; line-height: 40px; }
+  .lp-stats-grid, .lp-steps, .lp-ledger-tiles { grid-template-columns: 1fr; }
+  .lp-quick-card { padding: 24px; }
+  .lp-quick-form { grid-template-columns: 1fr; }
+  .lp-field-state, .lp-field-id, .lp-quick-submit { grid-column: 1; }
+  .lp-quick-submit { align-self: stretch; }
+  /* 16px keeps iOS from zooming the viewport when a field takes focus. */
+  .lp-select > select, .lp-input > input { font-size: 16px; }
+  .lp-quote { flex-direction: column; padding: 32px; text-align: center; }
+  .lp-quote figcaption { justify-content: center; }
+  .lp-cta h2 { font-size: 30px; }
+  /* Stitch stacks and centres the footer below md (text-center md:text-left). Its
+     mb-16 there is only clearance for the fixed nav, which .lp-page's padding
+     already provides. */
+  .lp-footer-inner { flex-direction: column; text-align: center; }
+  .lp-footer-tags { justify-content: center; }
 }
 
-@media (max-width: 380px) {
-  .lp-container { padding-inline: 16px; }
-  .lp-quick-card, .lp-step, .lp-compare-col { padding: 20px 16px; }
-  .lp-mobile-nav button { font-size: 11.5px; }
+@media (max-width: 639px) {
+  .lp-hero-actions, .lp-cta-actions { flex-direction: column; align-items: stretch; width: 100%; }
+  .lp-primary, .lp-ghost-link, .lp-cta-primary, .lp-cta-secondary { width: 100%; min-width: 0; }
 }
 /* ===== end landing page =================================================== */
 
@@ -588,7 +643,9 @@ html:lang(en) .lp-footer-brand strong { font-family: Fraunces, Georgia, serif; }
 
 @media (hover: hover) and (pointer: fine) {
   .primary-button:hover { background: #56351F; }
-  .lp-cta-primary:hover { background: #FAEDC8; }
+  .lp-cta-primary:hover { background: #DE871F; }
+  .lp-primary:hover, .lp-quick-submit:hover { background: var(--soil-brown-hover); }
+  .lp-step:hover { transform: translateY(-4px); }
   .action-tile:hover { border-color: rgba(107, 66, 38, .44); background: #fff8e7; }
   .action-tile.primary-tile:hover { background: #426b37; }
   .wide-outline-button:hover { background: #fff8e7; }
