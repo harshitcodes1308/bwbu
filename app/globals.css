@@ -3577,6 +3577,7 @@ html[data-contrast="high"] {
   border: 1px solid var(--line); border-radius: 999px;
   background: var(--surface-low); color: var(--soil-brown);
   font-size: 14px; font-weight: 700; cursor: pointer;
+  white-space: nowrap; /* keep the label on one line, never a wrapped circle */
   transition: background 140ms ease;
 }
 .read-aloud:hover { background: var(--surface-container); }
@@ -3588,7 +3589,10 @@ html[data-contrast="high"] {
 }
 .summary-audio:hover { background: rgba(255, 255, 255, 0.22); }
 .summary-audio.playing { background: rgba(255, 255, 255, 0.24); color: #fff; border-color: rgba(255, 255, 255, 0.5); }
-.page-title-audio { margin-left: auto; align-self: center; }
+/* The page-title grid is 48px + 1fr, so this third child gets its own row.
+   Span both columns and size to content (left-aligned pill), never a squeezed
+   48px cell that wraps the label into a circle. */
+.page-title-audio { grid-column: 1 / -1; justify-self: start; margin-top: 2px; }
 
 /* --- Shared-phone household job-card switcher --- */
 .household-switch { margin: 4px 0 18px; }
