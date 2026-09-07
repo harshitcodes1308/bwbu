@@ -10,6 +10,10 @@ async function main() {
   const draftGrievance = (await import("../app/api/draft-grievance/route")).POST;
   const otpPost = (await import("../app/api/otp/route")).POST;
   const otpVerify = (await import("../app/api/otp/verify/route")).POST;
+  const realtimeSession = (await import("../app/api/realtime-session/route")).POST;
+
+  // realtime-session: no key → configured:false (token is never minted client-side).
+  assert.deepEqual(await (await realtimeSession(req({ locale: "hi" }))).json(), { configured: false });
 
   // explain-wage: missing fields → 400.
   assert.equal((await explainWage(req({ locale: "hi", wageRecord: {} }))).status, 400);

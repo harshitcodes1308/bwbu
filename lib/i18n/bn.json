@@ -572,5 +572,20 @@
   "distanceAway": "{n} কিমি দূরে",
   "gramPanchayat": "গ্রাম পঞ্চায়েত অফিস",
   "callGrs": "রোজগার সহায়ককে কল করুন",
-  "getDirections": "পথ দেখুন"
+  "getDirections": "পথ দেখুন",
+  "callStart": "কথা শুরু করুন",
+  "callEnd": "কথা শেষ করুন",
+  "callMute": "মিউট করুন",
+  "callUnmute": "আনমিউট করুন",
+  "callConnecting": "যুক্ত করা হচ্ছে…",
+  "callListening": "শুনছি… এবার বলুন",
+  "callSpeaking": "উত্তর দিচ্ছি…",
+  "callEnded": "কথা শেষ হয়েছে",
+  "callMicDenied": "মাইকের অনুমতি পাওয়া যায়নি। অনুগ্রহ করে ব্রাউজারে মাইক চালু করুন।",
+  "callNotConfigured": "ভয়েস সেবা এখন উপলব্ধ নেই। একটু পরে আবার চেষ্টা করুন।",
+  "callUnsupported": "এই ফোনে লাইভ কথা বলা যায় না।",
+  "callError": "যুক্ত হতে সমস্যা হয়েছে। আবার চেষ্টা করুন।",
+  "callHint": "বোতাম চাপুন এবং নিজের ভাষায় প্রশ্ন করুন।",
+  "callCaptionsTitle": "কথোপকথন",
+  "callYou": "আপনি"
 }

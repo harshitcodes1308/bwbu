@@ -572,5 +572,20 @@
   "distanceAway": "{n} km away",
   "gramPanchayat": "Gram Panchayat office",
   "callGrs": "Call Rozgar Sahayak",
-  "getDirections": "Get directions"
+  "getDirections": "Get directions",
+  "callStart": "Start call",
+  "callEnd": "End call",
+  "callMute": "Mute",
+  "callUnmute": "Unmute",
+  "callConnecting": "Connecting…",
+  "callListening": "Listening… go ahead",
+  "callSpeaking": "Speaking…",
+  "callEnded": "Call ended",
+  "callMicDenied": "Microphone permission was denied. Please allow the mic in your browser.",
+  "callNotConfigured": "The voice service isn't available right now. Please try again later.",
+  "callUnsupported": "This phone can't make a live call.",
+  "callError": "Couldn't connect. Please try again.",
+  "callHint": "Tap the button and ask your question in your language.",
+  "callCaptionsTitle": "Conversation",
+  "callYou": "You"
 }

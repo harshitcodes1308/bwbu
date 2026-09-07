@@ -572,5 +572,20 @@
   "distanceAway": "{n} किमी दूर",
   "gramPanchayat": "ग्राम पंचायत कार्यालय",
   "callGrs": "रोज़गार सहायक को कॉल करें",
-  "getDirections": "रास्ता देखें"
+  "getDirections": "रास्ता देखें",
+  "callStart": "बात शुरू करें",
+  "callEnd": "बात खत्म करें",
+  "callMute": "आवाज़ बंद करें",
+  "callUnmute": "आवाज़ चालू करें",
+  "callConnecting": "जोड़ा जा रहा है…",
+  "callListening": "सुन रहा हूँ… अब बोलिए",
+  "callSpeaking": "जवाब दे रहा हूँ…",
+  "callEnded": "बातचीत खत्म हुई",
+  "callMicDenied": "माइक की अनुमति नहीं मिली। कृपया ब्राउज़र में माइक चालू करें।",
+  "callNotConfigured": "आवाज़ सेवा अभी उपलब्ध नहीं है। थोड़ी देर बाद फिर कोशिश करें।",
+  "callUnsupported": "यह फ़ोन लाइव बातचीत नहीं कर सकता।",
+  "callError": "जुड़ने में दिक्कत हुई। फिर से कोशिश करें।",
+  "callHint": "बटन दबाएँ और अपनी भाषा में सवाल पूछें।",
+  "callCaptionsTitle": "बातचीत",
+  "callYou": "आप"
 }

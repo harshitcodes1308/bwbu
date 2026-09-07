@@ -1,10 +1,8 @@
-// Network-first runtime cache: rural users lose signal mid-task, so a screen
-// already seen stays readable offline. POST /api/* is never cached (nothing to
-// cache, and the routes already have offline templates); cross-origin (fonts
-// CDN) is left to the browser.
-// ponytail: runtime cache only, no precache/versioned shell — add a build-time
-// precache manifest if the offline shell ever needs to be guaranteed complete.
-const CACHE = "mr-runtime-v1";
+// Offline runtime cache. Deliberately conservative: it must NEVER turn a
+// transient network hiccup into a broken page, and it leaves API calls and
+// Next.js dev/HMR/RSC traffic entirely to the browser.
+// ponytail: runtime cache only, no precache/versioned shell.
+const CACHE = "mr-runtime-v2";
 
 self.addEventListener("install", () => self.skipWaiting());
 
@@ -19,25 +17,51 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  const { request } = e;
-  if (request.method !== "GET") return; // POSTs (OTP, AI) hit the network
-  if (new URL(request.url).origin !== self.location.origin) return; // fonts etc.
-  e.respondWith(networkFirst(request));
+  const req = e.request;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  // Never intercept API calls or Next.js dev/HMR — the network owns these.
+  if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/_next/webpack-hmr")) return;
+
+  if (req.mode === "navigate") { e.respondWith(navHandler(req)); return; }
+
+  // Cache-first only for static assets; everything else is left to the browser.
+  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/images/") || url.pathname === "/manifest.webmanifest") {
+    e.respondWith(cacheFirst(req));
+  }
 });
 
-async function networkFirst(request) {
+// Navigations: network-first, but on failure fall back to any cached page and,
+// as a last resort, a tiny offline notice — never a rejected promise.
+async function navHandler(req) {
   const cache = await caches.open(CACHE);
   try {
-    const res = await fetch(request);
-    if (res && res.ok) cache.put(request, res.clone());
+    const res = await fetch(req);
+    if (res && res.ok) cache.put(req, res.clone());
     return res;
-  } catch (err) {
-    const cached = await cache.match(request);
-    if (cached) return cached;
-    if (request.mode === "navigate") {
-      const shell = (await cache.match("/home")) || (await cache.match("/"));
-      if (shell) return shell;
-    }
-    throw err;
+  } catch {
+    return (
+      (await cache.match(req)) ||
+      (await cache.match("/home")) ||
+      (await cache.match("/")) ||
+      new Response("<!doctype html><meta charset=utf-8><h1>ऑफ़लाइन</h1>", {
+        status: 200,
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      })
+    );
+  }
+}
+
+async function cacheFirst(req) {
+  const cache = await caches.open(CACHE);
+  const hit = await cache.match(req);
+  if (hit) return hit;
+  try {
+    const res = await fetch(req);
+    if (res && res.ok) cache.put(req, res.clone());
+    return res;
+  } catch {
+    return (await cache.match(req)) || Response.error();
   }
 }
