@@ -29,7 +29,7 @@ function splitQuota(days: number, wagePaid: number) {
 }
 
 export default function ProfilePage() {
-  const { t, language, setLanguage, profile, profileIndex, setProfileIndex, textLarge, setTextLarge, highContrast, setHighContrast } = useApp();
+  const { t, language, setLanguage, profile, profileIndex, setProfileIndex, textLarge, setTextLarge, highContrast, setHighContrast, logout } = useApp();
   const router = useRouter();
   const [toast, setToast] = useState<{ title: string; body: string } | null>(null);
   const [voiceOn, setVoiceOn] = useState(true);
@@ -371,6 +371,11 @@ export default function ProfilePage() {
             <strong>{profile.wage > 0 ? inr(profile.wage) : t.notStarted}</strong>
           </div>
         </div>
+
+        <button className="signout-button" type="button" onClick={() => { logout(); router.replace("/login"); }}>
+          <span className="material-symbols-outlined" aria-hidden="true">logout</span>
+          <span>{t.signOut}</span>
+        </button>
       </div>
     </div>
   );

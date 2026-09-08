@@ -587,5 +587,7 @@
   "callError": "जुड़ने में दिक्कत हुई। फिर से कोशिश करें।",
   "callHint": "बटन दबाएँ और अपनी भाषा में सवाल पूछें।",
   "callCaptionsTitle": "बातचीत",
-  "callYou": "आप"
+  "callYou": "आप",
+  "headerSignIn": "साइन इन",
+  "signOut": "साइन आउट"
 }

@@ -386,9 +386,11 @@ html:lang(en) .lp-footer-brand strong { font-family: Fraunces, Georgia, serif; }
 }
 /* ===== end landing page =================================================== */
 
-.login-page { position: relative; display: grid; min-height: 100dvh; place-items: center; overflow: auto; background: var(--wheat); }
-.login-paper { position: relative; z-index: 1; width: min(100%, 480px); min-height: 100dvh; padding-bottom: 32px; background: var(--paper); box-shadow: var(--shadow-card); }
-.login-hero { padding: 44px 30px 26px; }
+/* Full-bleed white page (no floating card). Content sits in a centred wrapper. */
+.login-page { position: relative; display: flex; flex-direction: column; min-height: 100dvh; background: var(--paper); }
+.login-body { flex: 1; width: 100%; }
+.login-hero { padding: 40px 30px 22px; }
+.login-hero-note { margin-top: 22px; }
 .sun-mark { position: relative; width: 58px; height: 58px; margin-bottom: 28px; border-radius: 50%; background: var(--sun-amber); }
 .sun-mark span { position: absolute; top: 50%; left: 50%; width: 5px; height: 13px; border-radius: 3px; background: var(--sun-amber); transform-origin: 50% 50%; }
 .sun-mark span:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translateY(-40px); }
@@ -398,14 +400,15 @@ html:lang(en) .lp-footer-brand strong { font-family: Fraunces, Georgia, serif; }
 .page-kicker, .panel-label, .draft-label { margin: 0; color: var(--leaf-green); font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .login-hero h1 { max-width: 8ch; margin: 10px 0 14px; color: var(--soil-brown); font-size: clamp(42px, 12vw, 64px); font-weight: 800; line-height: 1.08; }
 .hero-lead { max-width: 30ch; margin: 0; color: var(--muted); font-size: 19px; line-height: 1.45; }
-.login-form { display: grid; gap: 18px; padding: 12px 30px 0; }
+.login-panel { padding: 8px 30px 36px; }
+.login-form { display: grid; gap: 18px; }
 .login-form label, .task-form label { display: grid; gap: 8px; color: var(--soil-brown); font-size: 16px; font-weight: 750; }
 .login-form input, .task-form input, .task-form select, .otp-input { width: 100%; min-height: 54px; padding: 0 16px; border: 1px solid rgba(107, 66, 38, .36); border-radius: var(--radius-btn); color: var(--ink); background: #fff; font-size: 17px; }
 .login-form input::placeholder, .task-form input::placeholder { color: #75665B; opacity: 1; }
 .primary-button { display: inline-flex; align-items: center; justify-content: space-between; min-height: 56px; padding: 0 18px; border: 0; border-radius: var(--radius-btn); color: var(--paper); background: var(--soil-brown); font-weight: 800; transition: transform 140ms var(--ease-out), background-color 140ms ease; }
 .primary-button:active, .action-tile:active, .wide-outline-button:active, .grievance-option:active { transform: scale(.985); }
 .synthetic-note { display: flex; gap: 8px; margin: 20px 30px 0; padding-top: 15px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; line-height: 1.5; }
-.profile-picker { margin: 22px 30px 0; padding-top: 15px; border-top: 1px solid var(--line); }
+.profile-picker { margin: 22px 0 0; padding-top: 15px; border-top: 1px solid var(--line); }
 .profile-picker > span { color: var(--muted); font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
 .profile-picker > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-top: 9px; }
 .profile-picker button { display: grid; place-items: center; gap: 4px; min-height: 74px; padding: 6px 3px; border: 1px solid var(--line); border-radius: var(--radius-btn); color: var(--soil-brown); background: transparent; transition: border-color 140ms ease, background-color 140ms ease, transform 140ms var(--ease-out); }
@@ -616,8 +619,10 @@ html:lang(en) .lp-footer-brand strong { font-family: Fraunces, Georgia, serif; }
 .icon-switch::after { bottom: 3px; border-left: 2px solid currentColor; transform: rotate(180deg) skewX(34deg); }
 
 @media (min-width: 760px) {
-  .login-paper { min-height: 740px; margin: 32px auto; border-radius: 18px; }
-  .login-page { padding: 24px; }
+  /* Two-column auth layout, centred in the full-width white page. */
+  .login-body { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; width: 100%; max-width: 1040px; margin: 0 auto; padding: 32px 34px 48px; }
+  .login-hero, .login-panel { padding: 0; }
+  .login-form { max-width: 440px; }
   /* Full-bleed: the shell fills the viewport instead of floating as a centred card,
      so no page background shows around it. Content is centred by .page-width. */
   .app-shell { width: 100%; margin: 0; border-radius: 0; box-shadow: none; }
@@ -635,8 +640,7 @@ html:lang(en) .lp-footer-brand strong { font-family: Fraunces, Georgia, serif; }
   .brand-sub { display: none; }
   .brand-header { padding-inline: 16px; }
   .page-width { padding-inline: 16px; }
-  .login-form, .login-hero { padding-inline: 20px; }
-  .profile-picker, .synthetic-note { margin-inline: 20px; }
+  .login-hero, .login-panel { padding-inline: 20px; }
   .profile-picker > div { grid-template-columns: repeat(2, 1fr); }
   .day-options { grid-template-columns: repeat(2, 1fr); }
 }
@@ -3705,3 +3709,23 @@ html[data-contrast="high"] {
 @media (prefers-reduced-motion: reduce) {
   .call-ring { animation: none !important; }
 }
+
+/* --- Auth buttons (minimal header sign-in, profile sign-out) --- */
+.header-signin {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px;
+  border: 0; border-radius: 999px; background: var(--soil-brown); color: var(--paper);
+  font-size: 15px; font-weight: 700; cursor: pointer; transition: background 140ms ease;
+}
+.header-signin:hover { background: var(--soil-brown-hover); }
+.header-signin:focus-visible { outline: 2px solid var(--sun-amber); outline-offset: 2px; }
+
+.signout-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: 52px; margin-top: 24px;
+  border: 1px solid var(--terracotta-red); border-radius: var(--radius-btn);
+  background: transparent; color: var(--terracotta-red);
+  font-size: 16px; font-weight: 700; cursor: pointer; transition: background 140ms ease;
+}
+.signout-button:hover { background: var(--terracotta-tint); }
+.signout-button:focus-visible { outline: 2px solid var(--sun-amber); outline-offset: 2px; }
+.signout-button .material-symbols-outlined { font-size: 20px; }

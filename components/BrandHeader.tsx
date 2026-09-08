@@ -21,7 +21,7 @@ export function LanguageSwitch() {
   );
 }
 
-export function BrandHeader({ compact = false, onHome, onBack }: { compact?: boolean; onHome?: () => void; onBack?: () => void }) {
+export function BrandHeader({ compact = false, minimal = false, onHome, onBack }: { compact?: boolean; minimal?: boolean; onHome?: () => void; onBack?: () => void }) {
   const { t, language, profile } = useApp();
   const pathname = usePathname();
   const router = useRouter();
@@ -35,7 +35,7 @@ export function BrandHeader({ compact = false, onHome, onBack }: { compact?: boo
   ];
 
   return (
-    <header className={`brand-header ${compact ? "compact" : ""}`}>
+    <header className={`brand-header ${compact ? "compact" : ""} ${minimal ? "minimal" : ""}`}>
       <div className="brand-left">
         {onBack && <button className="back-button header-back" type="button" onClick={onBack} aria-label={t.back}><Icon name="back" /></button>}
         <button className="brand-lockup" type="button" onClick={onHome} disabled={!onHome} aria-label={t.brand}>
@@ -50,32 +50,42 @@ export function BrandHeader({ compact = false, onHome, onBack }: { compact?: boo
         </button>
       </div>
 
-      <nav className="header-nav" aria-label={t.navLabel}>
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`header-nav-link ${item.active ? "active" : ""}`}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      {!minimal && (
+        <nav className="header-nav" aria-label={t.navLabel}>
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`header-nav-link ${item.active ? "active" : ""}`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      )}
 
       <div className="brand-right">
         <LanguageSwitch />
-        <button
-          type="button"
-          className="header-profile-chip"
-          onClick={() => router.push("/profile")}
-          aria-label={profile.name[language]}
-        >
-          <Avatar profileId={profile.id} size={32} alt={profile.name[language]} />
-          <div className="header-profile-text">
-            <strong>{profile.name[language].split(" ")[0]}</strong>
-            <small>{profile.village[language].split(",")[0]}</small>
-          </div>
-        </button>
+        {minimal ? (
+          pathname !== "/login" && (
+            <button type="button" className="header-signin" onClick={() => router.push("/login")}>
+              {t.headerSignIn}
+            </button>
+          )
+        ) : (
+          <button
+            type="button"
+            className="header-profile-chip"
+            onClick={() => router.push("/profile")}
+            aria-label={profile.name[language]}
+          >
+            <Avatar profileId={profile.id} size={32} alt={profile.name[language]} />
+            <div className="header-profile-text">
+              <strong>{profile.name[language].split(" ")[0]}</strong>
+              <small>{profile.village[language].split(",")[0]}</small>
+            </div>
+          </button>
+        )}
       </div>
     </header>
   );

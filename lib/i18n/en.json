@@ -587,5 +587,7 @@
   "callError": "Couldn't connect. Please try again.",
   "callHint": "Tap the button and ask your question in your language.",
   "callCaptionsTitle": "Conversation",
-  "callYou": "You"
+  "callYou": "You",
+  "headerSignIn": "Sign in",
+  "signOut": "Sign out"
 }

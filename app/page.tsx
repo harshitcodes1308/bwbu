@@ -64,7 +64,7 @@ export default function LandingPage() {
   return (
     <div className="lp-page">
       <div className="lp-header-bar">
-        <BrandHeader onHome={() => router.push("/")} />
+        <BrandHeader minimal onHome={() => router.push("/")} />
       </div>
 
       <main>
